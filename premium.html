@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Premium Marital Risk Analysis – Marital Risk Analytics LLC</title>
+  <style>
+    :root {
+      --grad-start:#6a2ad9; --grad-end:#2e6bff; --pri:#5e2bb8;
+      --bg:#f7f8fc; --card:#fff; --text:#0b1220; --muted:#5b6b87; --border:#e6e9f2;
+      --shadow:0 10px 30px rgba(18,24,40,.06);
+    }
+    body {margin:0;font:16px/1.5 system-ui,Inter,Segoe UI,Roboto,Arial;color:var(--text);background:var(--bg);}
+    header {background:linear-gradient(135deg,var(--grad-start),var(--grad-end));color:#fff;padding:18px 0;}
+    .wrap{max-width:900px;margin:0 auto;padding:0 16px;}
+    .brand{display:flex;align-items:center;gap:12px;}
+    .logo-mark{display:flex;gap:6px;align-items:center;}
+    .dot{width:9px;height:9px;border-radius:3px;display:inline-block;}
+    .d1{background:#6a2ad9}.d2{background:#2a6bff}.d3{background:#e94196}.d4{background:#00c2ff}
+    .brand h1{margin:0;font-size:22px;font-weight:800;}
+    .brand small{display:block;opacity:.9;font-weight:600;}
+    main{padding:40px 16px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:32px;max-width:700px;margin:0 auto 32px;}
+    h2{font-size:24px;font-weight:800;margin-bottom:16px;}
+    label{font-weight:600;display:block;margin-top:16px;}
+    input:not([type="radio"]):not([type="checkbox"]), textarea, select{
+      width:100%; padding:10px; border:1px solid var(--border); border-radius:8px; margin-top:6px;
+    }
+    button{background:var(--pri);color:#fff;padding:12px 20px;border:none;border-radius:10px;font-weight:700;margin-top:24px;cursor:pointer;}
+    .muted{color:var(--muted);font-size:14px;margin-top:16px;}
+    footer{color:#64748b;text-align:center;padding:20px 0;margin-top:40px;}
+    fieldset { border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 0 0 12px 0; }
+    fieldset legend { display:none; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo-mark">
+        <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span>
+      </div>
+      <div>
+        <h1>Marital Risk Analytics LLC</h1>
+        <small>Divorce Exposure Score™</small>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Snapshot block (identical to phase2) -->
+  <section class="card">
+    <h2>Your Divorce Exposure Score™ Snapshot</h2>
+    <p>Based on your 10-question screening, here’s your summary:</p>
+    <p><b>Score:</b> <span id="score_val">—</span> / 850
+       &nbsp; <b>Exposure:</b> <span id="band_val">—</span>
+       &nbsp; <b>Red Flags:</b> <span id="flags_val">—</span></p>
+
+    <div id="phase2_gauge" style="display:flex;align-items:center;gap:16px;margin-top:12px;">
+      <div class="score-circle" style="position:relative;display:inline-block;">
+        <svg viewBox="0 0 200 200" width="160" height="160" aria-label="Score gauge">
+          <circle cx="100" cy="100" r="90" stroke="#eef0f5" stroke-width="20" fill="none"></circle>
+          <circle id="p2_progressArc" cx="100" cy="100" r="90" stroke="#5e2bb8" stroke-width="20" fill="none"
+                  stroke-dasharray="565.48" stroke-dashoffset="565.48" stroke-linecap="round"
+                  transform="rotate(-90 100 100)"></circle>
+        </svg>
+        <div class="circle-center" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+          <div id="p2_gaugeNumber" style="font-size:32px;font-weight:900;">—</div>
+          <div id="p2_gaugeBand" style="font-size:13px;font-weight:700;color:#5b6b87;margin-top:2px;">Start</div>
+          <div style="font-size:11px;color:#7a889e;margin-top:2px;">300 – 850</div>
+        </div>
+      </div>
+      <div>
+        <div id="p2_bandPill"
+             style="display:inline-block;background:#eef1ff;color:#2a2f45;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">
+          —
+        </div>
+        <p class="muted" style="margin:8px 0 0;">
+          This snapshot helps us focus the review. Like a credit score reflects your credit habits,
+          your Divorce Exposure Score™ reflects how your marital finances are set up.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Premium Matters -->
+  <section class="card">
+    <h2>Why Premium Marital Risk Analysis &amp; Recommendation Matters</h2>
+    <p class="muted">
+      The Premium review goes deeper using your actual documents and the law where you live. 
+      It translates your score into a concrete plan with prioritized, step‑by‑step adjustments to reduce exposure and
+      avoid costly disputes later. Think of it as moving from a score to a strategy.
+    </p>
+  </section>
+
+  <!-- Intake (name/email only) + explanation -->
+  <section class="card">
+    <h2>Request Your Premium Intake Packet</h2>
+
+    <!-- Hidden score data -->
+    <input type="hidden" id="score_hidden">
+    <input type="hidden" id="band_hidden">
+    <input type="hidden" id="flags_hidden">
+
+    <label for="full_name">Full Name</label>
+    <input id="full_name" type="text" placeholder="Your name" required>
+
+    <label for="email">Email</label>
+    <input id="email" type="email" placeholder="you@email.com" required>
+
+    <div class="muted">
+      <p><b>What happens next?</b></p>
+      <p>
+        Our team is currently finalizing the automation of our Premium workflow. To generate your Premium Report, you will receive by email a <b>PDF intake packet</b> to complete and send back with the necessary documentation, such as:
+      </p>
+      <ul>
+        <li>Last 3 years of tax returns</li>
+        <li>A copy of your prenuptial / postnuptial agreement (if any)</li>
+        <li>A copy of your marriage certificate</li>
+        <li>Income / expense details and any relevant account overviews</li>
+      </ul>
+      <p>
+        All documents you provide will be treated as <b>strictly confidential</b> and used only to prepare your tailored recommendations.
+      </p>
+    </div>
+
+    <button id="request_btn" type="button">Email Me the Premium Intake Packet</button>
+    <p class="muted" id="confirm" style="display:none;margin-top:10px;">Thanks! You’ll receive the PDF intake packet at the email above.</p>
+  </section>
+</main>
+
+<footer>
+  Informational diagnostic only — not legal, tax, or financial advice.
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Helpers
+  const pick = (a,b) => localStorage.getItem(a) || localStorage.getItem(b) || "—";
+  const setText = (id,val)=>{ const el=document.getElementById(id); if(el) el.textContent=val; };
+  const setVal  = (id,val)=>{ const el=document.getElementById(id); if(el) el.value=val; };
+
+  // Load Snapshot values
+  const scoreStr = pick("score","des_score");
+  const bandStr  = pick("band","des_band");
+  let flagsStr = pick("flags","des_flags");
+
+  setText("score_val", scoreStr);
+  setText("band_val",  bandStr);
+  setText("flags_val", flagsStr);
+  setVal("score_hidden", scoreStr);
+  setVal("band_hidden",  bandStr);
+  setVal("flags_hidden", flagsStr);
+
+  // Gauge
+  const score = Math.max(300, Math.min(850, Number(scoreStr) || 300));
+  const bandLabel = s => s >= 750 ? "Low" : (s >= 600 ? "Moderate" : "High");
+  const bandColor = s => s >= 750 ? "#0f9d58" : (s >= 600 ? "#fb8c00" : "#d93025");
+  const maxCirc = 565.48;
+  const percent = (score - 300) / 550;
+  const offset  = maxCirc - maxCirc * Math.max(0, Math.min(1, percent));
+  const arc = document.getElementById("p2_progressArc");
+  if (arc) { arc.style.strokeDashoffset = String(offset); arc.style.stroke = bandColor(score); }
+  setText("p2_gaugeNumber", String(score));
+  const band = bandLabel(score) + " exposure";
+  setText("p2_gaugeBand", band);
+  const pill = document.getElementById("p2_bandPill");
+  if (pill) { pill.textContent = band; pill.style.border = "1px solid " + bandColor(score) + "22"; }
+
+  // Simple fake submit
+  const btn = document.getElementById("request_btn");
+  btn?.addEventListener("click", () => {
+    const name = document.getElementById("full_name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    if(!name || !email){ alert("Please enter your name and email."); return; }
+    document.getElementById("confirm").style.display = "block";
+  });
+});
+</script>
+
+</body>
+</html>
