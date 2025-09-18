@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment Success</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Inter,Arial;padding:40px;color:#0b1220;background:#f7f8fc}
+    .card{max-width:560px;margin:40px auto;background:#fff;border:1px solid #e6e9f2;border-radius:12px;padding:24px;box-shadow:0 10px 30px rgba(18,24,40,.06);}
+    h1{font-size:20px;margin:0 0 8px 0}
+    .muted{color:#5b6b87}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Thanks — verifying payment…</h1>
+    <p class="muted" id="msg">Please wait a moment.</p>
+  </div>
+
+<script>
+(async ()=>{
+  const qs = new URLSearchParams(location.search);
+  const session_id = qs.get('session_id');
+  const product = qs.get('product') || '';
+  const score = qs.get('score') || sessionStorage.getItem('des_score') || '';
+  const band  = qs.get('band')  || sessionStorage.getItem('des_band')  || '';
+  const flags = qs.get('flags') || sessionStorage.getItem('des_flags') || '';
+  const $msg = document.getElementById('msg');
+  try{
+    if(!session_id){ $msg.textContent = 'Missing session id.'; return; }
+    const r = await fetch('/.netlify/functions/verify-session?session_id='+encodeURIComponent(session_id));
+    const data = await r.json();
+    if(!data.paid){ $msg.textContent = 'Payment not found or not paid. Redirecting…'; setTimeout(()=>location.href='index.html', 1500); return; }
+    if(product === 'premium'){
+      localStorage.setItem('paid_premium','true');
+      location.replace(`premium.html?score=${encodeURIComponent(score)}&band=${encodeURIComponent(band)}&flags=${encodeURIComponent(flags)}`);
+    } else {
+      localStorage.setItem('paid_personal','true');
+      location.replace(`phase2.html?score=${encodeURIComponent(score)}&band=${encodeURIComponent(band)}&flags=${encodeURIComponent(flags)}`);
+    }
+  }catch(e){
+    console.error(e);
+    $msg.textContent = 'Verification failed. Please return to the home page.';
+  }
+})();
+</script>
+</body>
+</html>

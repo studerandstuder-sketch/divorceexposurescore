@@ -1,0 +1,13 @@
+{
+  "name": "marital-risk-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static site with Netlify Functions for Stripe Checkout",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

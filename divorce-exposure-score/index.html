@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Divorce Exposure Score™</title>
+  <meta name="description" content="Instant, private Divorce Exposure Score on a 300–850 scale.">
+  <style>
+    :root{
+      --pri:#5e2bb8; --grad-start:#6a2ad9; --grad-end:#2e6bff;
+      --good:#0f9d58; --warn:#fb8c00; --bad:#d93025;
+      --bg:#f7f8fc; --card:#fff; --text:#0b1220; --muted:#5b6b87; --border:#e6e9f2;
+      --shadow:0 10px 30px rgba(18,24,40,.06);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font:16px/1.5 system-ui,Inter,Segoe UI,Roboto,Arial;color:var(--text);background:var(--bg)}
+    header{background:linear-gradient(135deg,var(--grad-start),var(--grad-end));color:#fff;padding:18px 16px}
+    .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo-mark{display:flex;gap:6px;align-items:center}
+    .dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+    .d1{background:#6a2ad9}.d2{background:#2e6bff}.d3{background:#e94196}.d4{background:#00c2ff}
+    .brand h1{margin:0;font-size:22px;font-weight:800}
+    .brand small{display:block;opacity:.9;font-weight:500}
+    .sub{color:#eef1ff;opacity:.95;margin-top:4px}
+    main.wrap{display:grid;grid-template-columns:1fr;gap:18px;transform:translateY(-10px)}
+    @media(min-width:980px){main.wrap{grid-template-columns:1.3fr .7fr}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:16px}
+    fieldset{border:1px solid var(--border);border-radius:12px;padding:12px;margin:0 0 12px 0}
+    legend{font-weight:700}
+    label.option{display:flex;gap:8px;border:1px solid var(--border);border-radius:10px;padding:10px;margin:6px 0;cursor:pointer;transition:.15s}
+    label.option:hover{border-color:#cbd5ff;background:#f6f8ff}
+    input[type=radio]{accent-color:var(--pri)}
+    .btn{display:inline-block;border-radius:10px;padding:12px 14px;font-weight:700;text-align:center;text-decoration:none;cursor:pointer}
+    .btn.primary{background:var(--pri);color:#fff}.btn.alt{background:#fff;border:1px solid #c9d2ff}
+    .btn.full{width:100%}
+    .muted{color:var(--muted)}
+    .sticky{position:sticky;top:14px}
+    /* Gauge */
+    .score-circle{position:relative;display:inline-block;margin:6px auto}
+    .circle-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+    .gauge-num{font-size:42px;font-weight:900}
+    .gauge-band{font-size:14px;font-weight:700;margin-top:4px;color:#5b6b87}
+    .gauge-scale{font-size:12px;color:#7a889e;margin-top:2px}
+    .pill{display:inline-block;background:#eef1ff;color:#2a2f45;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700}
+    .error{border-color:#d93025 !important;background:#fff1f1}
+    .hint{font-size:12px;color:#8a2630;margin-top:6px}
+    footer{margin:22px 0}
+    .disclaimer{font-size:14px;color:#2a2f45;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
+    .disclaimer strong{display:block;margin-bottom:6px}
+  .btn.disabled{opacity:.5;pointer-events:none;cursor:not-allowed}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo-mark" aria-hidden="true">
+        <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span>
+      </div>
+      <div>
+        <h1>Marital Risk Analytics LLC</h1>
+        <small>Divorce Exposure Score™</small>
+      </div>
+    </div>
+    <div class="sub">Instant, private result on a 300–850 scale. No uploads. Just a neutral diagnostic.</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- LEFT: FORM -->
+  <section>
+    <form id="scoreForm" class="card">
+      <h3>Answer 10 quick questions</h3>
+      <p class="muted">We’ll estimate your exposure based on how your assets and accounts are set up today.</p>
+
+      <!-- 1 Prenup -->
+      <fieldset data-key="prenup"><legend>📜 Pre- / Posnup / Where You Live</legend>
+        <label class="option"><input type="radio" name="prenup" value="100"> Prenup/postnup fits where we live now</label>
+        <label class="option"><input type="radio" name="prenup" value="30"> Prenup/postnup exists, not updated after moving</label>
+        <label class="option"><input type="radio" name="prenup" value="15"> No prenup; community-property/cross-border</label>
+        <label class="option"><input type="radio" name="prenup" value="5"> No prenup; moved a lot, unclear law</label>
+      </fieldset>
+
+      <!-- 2 Home -->
+      <fieldset data-key="home"><legend>🏠 Primary Home</legend>
+        <label class="option"><input type="radio" name="home" value="100"> We rent, no house to split</label>
+        <label class="option"><input type="radio" name="home" value="70"> Title only in my name/entity</label>
+        <label class="option"><input type="radio" name="home" value="5"> Joint title but I fully pay</label>
+        <label class="option"><input type="radio" name="home" value="70"> Joint title and both pay</label>
+      </fieldset>
+
+      <!-- 3 Rentals -->
+      <fieldset data-key="rentals"><legend>🏘️ Investment / Rentals</legend>
+        <label class="option"><input type="radio" name="rentals" value="100"> All properties in my name/entity</label>
+        <label class="option"><input type="radio" name="rentals" value="30"> Some mine, some joint</label>
+        <label class="option"><input type="radio" name="rentals" value="15"> Most are joint</label>
+        <label class="option"><input type="radio" name="rentals" value="5"> Everything joint</label>
+      </fieldset>
+
+      <!-- 4 K1 -->
+      <fieldset data-key="k1"><legend>💼 Business Investments & K-1</legend>
+        <label class="option"><input type="radio" name="k1" value="100"> Shares only in my name/entity</label>
+        <label class="option"><input type="radio" name="k1" value="70"> Some joint but clear records</label>
+        <label class="option"><input type="radio" name="k1" value="15"> Several joint holdings</label>
+        <label class="option"><input type="radio" name="k1" value="5"> Mostly joint; spouse on papers</label>
+      </fieldset>
+
+      <!-- 5 Crypto -->
+      <fieldset data-key="crypto"><legend>💻 Crypto & Digital Assets</legend>
+        <label class="option"><input type="radio" name="crypto" value="100"> All wallets/exchanges in my name</label>
+        <label class="option"><input type="radio" name="crypto" value="70"> Some joint but tracked</label>
+        <label class="option"><input type="radio" name="crypto" value="5"> Most shared</label>
+        <label class="option"><input type="radio" name="crypto" value="5"> Everything joint or not tracked</label>
+      </fieldset>
+
+      <!-- 6 Retirement -->
+      <fieldset data-key="retire"><legend>💰 Retirement & Investments</legend>
+        <label class="option"><input type="radio" name="retire" value="100"> All in my name</label>
+        <label class="option"><input type="radio" name="retire" value="30"> Separate checking, joint savings</label>
+        <label class="option"><input type="radio" name="retire" value="15"> Some joint</label>
+        <label class="option"><input type="radio" name="retire" value="5"> All joint</label>
+      </fieldset>
+
+      <!-- 7 Banking -->
+      <fieldset data-key="banking"><legend>🏦 Banking & Cash Flow</legend>
+        <label class="option"><input type="radio" name="banking" value="100"> Separate accounts</label>
+        <label class="option"><input type="radio" name="banking" value="70"> Some shared spending</label>
+        <label class="option"><input type="radio" name="banking" value="15"> Most income/bills joint</label>
+        <label class="option"><input type="radio" name="banking" value="5"> Everything joint, not tracked</label>
+      </fieldset>
+
+      <!-- 8 Biz use -->
+      <fieldset data-key="bizuse"><legend>🏢 Business / Company Use</legend>
+        <label class="option"><input type="radio" name="bizuse" value="100"> Business only pays business</label>
+        <label class="option"><input type="radio" name="bizuse" value="50"> Sometimes personal, but paid back</label>
+        <label class="option"><input type="radio" name="bizuse" value="15"> Often used for family expenses</label>
+        <label class="option"><input type="radio" name="bizuse" value="5"> Fully mixed; spouse on papers</label>
+      </fieldset>
+
+      <!-- 9 Debts -->
+      <fieldset data-key="debt"><legend>💳 Debts & Credit</legend>
+        <label class="option"><input type="radio" name="debt" value="100"> Mostly in my name</label>
+        <label class="option"><input type="radio" name="debt" value="70"> Some joint but tracked</label>
+        <label class="option"><input type="radio" name="debt" value="15"> Several shared loans/cards</label>
+        <label class="option"><input type="radio" name="debt" value="5"> Most joint, unclear responsibility</label>
+      </fieldset>
+
+      <!-- 10 Taxes -->
+      <fieldset data-key="tax"><legend>🧾 Taxes & Disclosure</legend>
+        <label class="option"><input type="radio" name="tax" value="100"> File separately; full disclosure</label>
+        <label class="option"><input type="radio" name="tax" value="70"> File jointly; clear returns</label>
+        <label class="option"><input type="radio" name="tax" value="15"> Joint returns but with gaps</label>
+        <label class="option"><input type="radio" name="tax" value="5"> Messy/incomplete returns</label>
+      </fieldset>
+
+      <button type="submit" class="btn primary full">Calculate My Score</button>
+      <div id="formHint" class="hint" style="display:none">Please answer all 10 questions above.</div>
+      <p class="muted" style="font-size:12px;margin-top:8px">Informational diagnostic only — not legal, tax, or financial advice.</p>
+    </form>
+  </section>
+
+  <!-- RIGHT: STICKY RESULTS -->
+  <aside class="sticky">
+    <div id="results" class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
+        <strong>Your Divorce Exposure Score™</strong>
+        <span id="bandPill" class="pill">—</span>
+      </div>
+      <div class="score-circle">
+        <svg viewBox="0 0 200 200" width="220" height="220" aria-label="Score gauge">
+          <circle cx="100" cy="100" r="90" stroke="#eef0f5" stroke-width="20" fill="none"/>
+          <circle id="progressArc" cx="100" cy="100" r="90" stroke="#5e2bb8" stroke-width="20" fill="none"
+                  stroke-dasharray="565.48" stroke-dashoffset="565.48" stroke-linecap="round"
+                  transform="rotate(-90 100 100)"/>
+        </svg>
+        <div class="circle-center">
+          <div id="gaugeNumber" class="gauge-num">—</div>
+          <div id="gaugeBand" class="gauge-band">Start</div>
+          <div class="gauge-scale">300 – 850</div>
+        </div>
+      </div>
+      <p id="messageText" class="muted" style="min-height:56px"></p>
+      <div class="cta-stack">
+        <a id="toPhase2" href="#" class="btn alt disabled" aria-disabled="true" tabindex="-1">Personal Marital Risk Analysis ($49)</a>
+        <a href="#" class="btn primary">Premium Marital Risk Analysis & Recommendation ($699)</a>
+      </div>
+
+      <footer>
+        <div class="disclaimer">
+          <strong>Important Notice</strong>
+          Your Divorce Exposure Score™ is an informational tool only. It gives you a first indication of where you might stand, but it is not legal, financial, or tax advice. Divorce laws can differ by <b>state, country, and sometimes even by city</b>.<br/><br/>
+          Whatever your score is, we strongly recommend going one step further:
+          <ul>
+            <li><b>Personal Marital Risk Analysis ($49):</b> A tailored review of your current setup to highlight your specific risks.</li>
+            <li><b>Premium Marital Risk Analysis & Recommendation ($699):</b> A deep dive into your financial and marital behavior, with direct recommendations to make small adjustments that could save thousands (or even millions) of dollars, while limiting the chance of being challenged in the future.</li>
+          </ul>
+          ⚡ Act now — a small step today can protect you from major losses tomorrow.
+        </div>
+      </footer>
+    </div>
+  </aside>
+</main>
+
+<script>
+// weights
+const W={prenup:.30,home:.20,rentals:.15,k1:.10,crypto:.05,retire:.10,banking:.05,bizuse:.03,debt:.02,tax:.05};
+const KEYS=Object.keys(W);
+const toPct=v=>Math.max(0,Math.min(100,Number(v||0)))/100;
+function computeWeightedPct(v){let w=0;for(const k in W)w+=toPct(v[k])*W[k];return w}
+function minCategoryPct(v){let m=1;for(const k in W)m=Math.min(m,toPct(v[k]));return m}
+function countFlags(v){
+  let f=0;
+  if(v.prenup<=30)f++; if(v.prenup<=15)f++; // weak/no prenup
+  if(v.home==5)f++;                         // joint title but you pay
+  if(v.bizuse<=15)f++;                      // commingling
+  if(v.tax<=15)f++;                         // messy/gaps
+  if(v.crypto<=5 && v.crypto<70)f++;        // joint/untracked crypto
+  if(v.debt<=15)f++;                        // joint debts
+  if(v.banking<=15)f++;                     // joint banking
+  if(v.rentals<=15)f++;                     // joint rentals
+  if(v.retire<=15)f++;                      // joint investments
+  return f;
+}
+function applyCaps(s,f){
+  if(f>=6)s=Math.min(s,520);
+  else if(f>=4)s=Math.min(s,560);
+  else if(f>=3)s=Math.min(s,600);
+  return Math.max(300,s-40*f);
+}
+function compute(v){
+  const w=computeWeightedPct(v), b=minCategoryPct(v);
+  let base=300+Math.round((.6*w+.4*b)*550);
+  const f=countFlags(v);
+  return {score:applyCaps(base,f), flags:f};
+}
+function bandLabel(s){if(s>=750)return"Low";if(s>=600)return"Moderate";return"High"}
+function bandColor(s){if(s>=750)return"#0f9d58";if(s>=600)return"#fb8c00";return"#d93025"}
+function messageByRange(score){
+  if(score>=800) return "You’re in a very strong position. We only found 1 minor red flag, but overall your financial setup looks clean and protected. Keep documents updated, and if you move states or countries, make sure your prenup/postnup is reviewed. Small maintenance now keeps your protection solid.";
+  if(score>=750) return "Good job — your setup is mostly protective. We spotted 2 areas that could raise questions (for example, shared savings or old prenup). Updating those details now will strengthen your defense and close the small gaps before they can be used against you.";
+  if(score>=700) return "You’re fairly well protected, but we found 3 red flags. That could make it easier for your spouse’s lawyer to challenge you. The good news? Small corrections like separating accounts or adjusting how your business expenses are documented can immediately raise your score.";
+  if(score>=650) return "Your setup is workable, but we flagged 4 issues that put you at risk. For example, joint accounts or outdated filings weaken your position. Addressing these sooner rather than later can prevent expensive disputes in case of divorce. A Personal Marital Risk Analysis is highly recommended.";
+  if(score>=600) return "You’re showing 5 red flags. This doesn’t mean you’ll lose everything, but it does mean your spouse’s lawyer could find easy ways to argue against you. The biggest risks are often joint titles and shared accounts — and both can be corrected with the right steps.";
+  if(score>=550) return "Your exposure is high. We found 6 areas that could cost you heavily in divorce, such as no prenup, shared business spending, or joint property. Even a small change, like separating savings or documenting business expenses correctly, could protect you immediately.";
+  if(score>=500) return "We flagged 7 risk areas in your financial setup. Right now, your spouse’s lawyer would have an easy job. But there are solutions: even without a prenup, state-specific agreements and better financial separation can reduce your exposure quickly. Don’t wait — act now.";
+  if(score>=450) return "You’re in a critical exposure zone with 8 major red flags. Joint accounts, missing prenup, and commingled assets are leaving you vulnerable. The good news? Most of these can be fixed without radical changes — but you need a clear plan. Our Premium Analysis can map this out.";
+  if(score>=400) return "We found 9 red flags — almost every category is at risk. Without action, a divorce could cost you far more than necessary. Even so, there are solutions: trusts, account separation, and reviewing your filings can turn things around. But this requires a tailored plan.";
+  return "This is the highest level of exposure. We flagged 10+ risks, meaning your current setup is extremely vulnerable. The lack of prenup, joint property, shared debts, and messy taxes all combine to put you at maximum risk. But even here, small corrections add up. The sooner you act, the sooner you limit the damage. Our Premium service is not optional — it’s urgent.";
+}
+
+// Validation & compute
+const KEYS_ARR=Object.keys(W);
+function allAnswered(data){for(const k of KEYS_ARR){if(!data.get(k)) return false;} return true;}
+function highlightMissing(data){
+  document.querySelectorAll('fieldset').forEach(fs=>fs.classList.remove('error'));
+  for(const k of KEYS_ARR){ if(!data.get(k)){ const fs=document.querySelector(`fieldset[data-key="${k}"]`); if(fs) fs.classList.add('error'); } }
+}
+function runCompute(){
+  const form=document.getElementById('scoreForm');
+  const data=new FormData(form);
+  if(!allAnswered(data)){ document.getElementById('formHint').style.display='block'; highlightMissing(data); return; }
+  document.getElementById('formHint').style.display='none';
+  const vals=Object.fromEntries(data.entries()); for(const k in vals) vals[k]=Number(vals[k]);<!-- BEGIN: store chosen answers (label + value) -->
+  // capture the selected label + value per fieldset
+  const answers = {};
+  document.querySelectorAll('fieldset').forEach(fs => {
+    const key = fs.dataset.key;
+    const checked = fs.querySelector('input[type="radio"]:checked');
+    if (checked) {
+      const labelText = checked.closest('label').innerText.trim();
+      answers[key] = { value: Number(checked.value), label: labelText };
+    }
+  });
+  // persist full answer set for Phase 2
+  localStorage.setItem('des_answers', JSON.stringify(answers));
+<!-- END: store chosen answers -->
+  const {score,flags}=compute(vals);
+  const max=565.48, percent=(score-300)/550, offset=max-(max*percent);
+  const arc=document.getElementById('progressArc');
+  arc.style.strokeDashoffset=offset; arc.style.stroke=bandColor(score);
+  document.getElementById('gaugeNumber').textContent=score;
+  const band=bandLabel(score)+" exposure";
+  document.getElementById('gaugeBand').textContent=band;
+  document.getElementById('bandPill').textContent=band;
+  document.getElementById('messageText').textContent=messageByRange(score);
+
+  
+  // ---- enable CTAs now that score is computed ----
+  const toPhase2El = document.getElementById('toPhase2');
+  const toPremiumEl = document.getElementById('toPremium');
+  if (toPhase2El){
+    const u2 = new URL('phase2.html', location.origin);
+    u2.searchParams.set('score', score);
+    u2.searchParams.set('band', band);
+    u2.searchParams.set('flags', flags);
+    toPhase2El.setAttribute('href', u2.toString());
+    toPhase2El.classList.remove('disabled');
+    toPhase2El.setAttribute('aria-disabled','false');
+    toPhase2El.removeAttribute('tabindex');
+  }
+  if (toPremiumEl){
+    const up = new URL('premium.html', location.origin);
+    up.searchParams.set('score', score);
+    up.searchParams.set('band', band);
+    up.searchParams.set('flags', flags);
+    toPremiumEl.setAttribute('href', up.toString());
+    toPremiumEl.classList.remove('disabled');
+    toPremiumEl.setAttribute('aria-disabled','false');
+    toPremiumEl.removeAttribute('tabindex');
+  }
+// persist + wire Phase 2 link with params
+  localStorage.setItem('des_score', score);
+  localStorage.setItem('des_band', band);
+  localStorage.setItem('des_flags', flags);
+  const u = new URL('phase2.html', location.origin);
+  u.searchParams.set('score', score);
+  u.searchParams.set('band', band);
+  u.searchParams.set('flags', flags);
+  document.getElementById('toPhase2').setAttribute('href', u.toString());
+}
+document.getElementById('scoreForm').addEventListener('submit', (e)=>{ e.preventDefault(); runCompute(); document.getElementById('results').scrollIntoView({behavior:'smooth'}); });
+document.getElementById('scoreForm').addEventListener('change', runCompute);
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  const a1 = document.getElementById('toPhase2');
+  const a2 = document.getElementById('toPremium');
+  if (a1){ a1.href='#'; a1.classList.add('disabled'); a1.setAttribute('aria-disabled','true'); a1.setAttribute('tabindex','-1'); }
+  if (a2){ a2.href='#'; a2.classList.add('disabled'); a2.setAttribute('aria-disabled','true'); a2.setAttribute('tabindex','-1'); }
+});
+
+</script>
+</body>
+</html>

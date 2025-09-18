@@ -1,0 +1,8 @@
+[build]
+  functions = "netlify/functions"
+
+# Optional: ensure /success route serves success.html even if linked without extension
+[[redirects]]
+  from = "/success"
+  to = "/success.html"
+  status = 200

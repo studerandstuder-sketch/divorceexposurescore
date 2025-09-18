@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Divorce Exposure Score™ – Personalized Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* ---- Risk Interpretation layout ---- */
+.clarifiers-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+@media(min-width:900px){
+  .clarifiers-grid{ grid-template-columns:1fr 1fr; }
+}
+.clarifier-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px 14px;
+  box-shadow:var(--shadow);
+}
+.clarifier-item strong{
+  display:block;
+  font-weight:800;
+  margin-bottom:4px;
+}
+
+:root{
+  /* shared tokens from index/phase2 */
+  --pri:#5e2bb8; --grad-start:#6a2ad9; --grad-end:#2e6bff;
+  --good:#0f9d58; --warn:#fb8c00; --bad:#d93025;
+  --bg:#f7f8fc; --card:#fff; --text:#0b1220; --muted:#5b6b87; --border:#e6e9f2;
+  --shadow:0 10px 30px rgba(18,24,40,.06);
+
+  /* report extras */
+  --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 system-ui,Inter,Segoe UI,Roboto,Arial;color:var(--text);background:var(--bg)}
+
+/* === Unified header (same as index/phase2) === */
+header{background:linear-gradient(135deg,var(--grad-start),var(--grad-end));color:#fff;padding:18px 16px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-mark{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+.d1{background:#6a2ad9}.d2{background:#2e6bff}.d3{background:#e94196}.d4{background:#00c2ff}
+.brand h1{margin:0;font-size:22px;font-weight:800}
+.brand small{display:block;opacity:.9;font-weight:500}
+.sub{color:#eef1ff;opacity:.95;margin-top:4px}
+
+/* Report layout */
+.container{max-width:960px;margin:24px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+h2{margin:0 0 8px 0;font-size:20px}
+h3{margin:0 0 8px 0;font-size:16px}
+.muted{color:var(--muted)}
+.kpis{display:flex;gap:12px;flex-wrap:wrap}
+.pill{display:inline-block;background:#eef1ff;color:#2a2f45;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700}
+
+/* Gauge */
+.gauge{display:flex;align-items:center;gap:16px}
+.score-circle{position:relative;display:inline-block}
+.circle-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+#progressArc{stroke-dasharray:565.48;stroke-dashoffset:565.48;stroke-linecap:round}
+
+/* Lists */
+.row{display:flex;gap:10px}
+.row > div{flex:1}
+ul.clean{padding-left:18px;margin:6px 0}
+.sep{height:1px;background:var(--border);margin:12px 0}
+.chip{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:6px 10px;margin:4px 6px 0 0;font-size:12px;background:#f7f8ff}
+
+/* Print */
+@media print{
+  header{box-shadow:none;border-bottom:2px solid #003ed1;border-radius:0}
+  .card{page-break-inside:avoid}
+  body{background:#fff}
+}
+
+/* Buttons (matched to index.html) */
+.btn{display:inline-block;border-radius:10px;padding:12px 14px;font-weight:700;text-align:center;text-decoration:none;cursor:pointer}
+.btn.primary{background:var(--pri);color:#fff}
+.btn.alt{background:#fff;border:1px solid #c9d2ff}
+.btn.full{width:100%}
+</style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo-mark" aria-hidden="true">
+          <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span>
+        </div>
+        <div>
+          <h1>Marital Risk Analytics LLC</h1>
+          <small>Divorce Exposure Score™ – Personalized Report</small>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Snapshot -->
+    
+  <section class="card" id="reportHeader">
+    <h2>Personal Marital Risk Analysis Report</h2>
+    <p><b>Client:</b> <span id="clientName">—</span></p>
+    <p><b>Date:</b> <span id="reportDate">—</span></p>
+    <p><b>Email:</b> <span id="clientEmail">—</span></p>
+  </section>
+
+  <section class="card">
+      <h2>Your Divorce Exposure Score™ Snapshot</h2>
+      <div class="gauge" style="margin-top:8px;">
+        <div class="score-circle">
+          <svg viewBox="0 0 200 200" width="160" height="160" aria-label="Score gauge">
+            <circle cx="100" cy="100" r="90" stroke="#eef0f5" stroke-width="20" fill="none"></circle>
+            <circle id="progressArc" cx="100" cy="100" r="90" stroke="#5e2bb8" stroke-width="20" fill="none" transform="rotate(-90 100 100)"></circle>
+          </svg>
+          <div class="circle-center">
+            <div id="gaugeNumber" style="font-size:32px;font-weight:900;">—</div>
+            <div id="gaugeBand" class="muted" style="font-size:13px;font-weight:700;margin-top:2px;">Start</div>
+            <div class="muted" style="font-size:11px;margin-top:2px;">300 – 850</div>
+          </div>
+        </div>
+        <div>
+          <div id="bandPill" class="pill">—</div>
+          <p class="muted" style="margin:8px 0 0;">
+            This snapshot helps us focus the review. Like a credit score reflects your credit habits, your Divorce Exposure Score™ reflects how your marital finances are set up.
+          </p>
+        </div>
+      </div>
+      <div class="kpis" style="margin-top:12px;">
+        <div><b>Score:</b> <span id="score_val">—</span> / 850</div>
+        <div><b>Exposure:</b> <span id="band_val">—</span></div>
+        <div><b>Red Flags:</b> <span id="flags_val">—</span></div>
+      </div>
+    </section>
+
+    <!-- 1. Executive Summary -->
+    <section class="card">
+      <h2>1) Executive Summary</h2>
+      <div id="summary_text" class="muted">Loading your summary…</div>
+    </section>
+
+    <!-- 2. Personalized Red Flags & Positive Notes -->
+    <section class="card">
+      <h2>2) Personalized Red Flags &amp; Positive Notes</h2>
+      <div id="notes_body"></div>
+    </section>
+
+    <!-- 3. Risk Interpretation -->
+    <section class="card">
+      <h2>3) Risk Interpretation</h2>
+      <p class="muted">Below is an interpretation of your risk by category.</p>
+
+      <div id="clarifiers_recap"></div>
+    </section>
+
+    <!-- 4. Next Steps & Recommendations -->
+    <section class="card">
+      <h2>4) Next Steps &amp; Recommendations</h2>
+      <ul id="next_steps" class="clean"></ul>
+      <div class="sep"></div>
+      <h3>Premium Review (Optional but Recommended)</h3>
+      <p class="muted">
+        A Premium Marital Risk Analysis uses more of your personal information (e.g., the actual terms of your prenup/postnup and the law where you live; how you manage marital finances; how your real estate and business interests are titled; what your tax returns report). The Premium review goes deeper into your current system and what is available now. Keep in mind: anything available to you is generally available to a lawyer who might challenge your setup. With this first report, you see both strengths and weaknesses, and we recommend adjusting habits now before it becomes harder later—just like improving a credit score.
+      </p>
+      <div class="sep"></div>
+      <h3>Important Notice</h3>
+      <p class="muted" style="margin-top:0">
+        This report is informational only. Divorce laws differ by state and country, and results are indicative. If you want a deeper strategy with specific steps:
+      </p>
+      <ul class="clean">
+        <li><b>Premium Marital Risk Analysis &amp; Recommendations ($699):</b> Includes review of 3 years of tax returns, marriage certificate, prenup/postnup, income/expense details, and tailored recommendations to adjust your setup.</li>
+      </ul>
+
+      <div style="margin:24px 0; display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+  <a href="premium.html" class="btn primary">Premium Marital Risk Analysis &amp; Recommendation ($699)</a>
+  
+</div>
+
+<p class="muted"><b>Informational diagnostic only – not legal, tax, or financial advice.</b></p>
+    </section>
+  </div>
+
+<script>
+// ---------- Helpers ----------
+const pick = (a,b) => localStorage.getItem(a) || localStorage.getItem(b) || "";
+const el = id => document.getElementById(id);
+
+// ---------- Load stored data ----------
+const scoreStr = pick("score","des_score");
+const bandStr  = pick("band","des_band");
+const flagsStr = pick("flags","des_flags");
+let answers = {};          // Phase 1 (index)
+let followups = {};        // Phase 2 (clarifiers)
+try{ answers = JSON.parse(localStorage.getItem("des_answers") || "{}"); }catch(e){}
+try{ followups = JSON.parse(localStorage.getItem("des_followups") || "{}"); }catch(e){}
+
+// ---------- Snapshot UI ----------
+(function renderSnapshot(){
+  el("score_val").textContent = scoreStr || "—";
+  el("band_val").textContent  = bandStr  || "—";
+  el("flags_val").textContent = flagsStr || "—";
+
+  const s = Math.max(300, Math.min(850, Number(scoreStr)||300));
+  const label = s>=750 ? "Low exposure" : (s>=600 ? "Moderate exposure" : "High exposure");
+  const color = s>=750 ? "#0f9d58" : (s>=600 ? "#fb8c00" : "#d93025");
+  const max = 565.48, pct = (s-300)/550, offset = max - max*Math.max(0,Math.min(1,pct));
+  const arc = document.getElementById("progressArc");
+  if (arc){ arc.style.strokeDashoffset = String(offset); arc.style.stroke = color; }
+  const nb = document.getElementById("gaugeNumber"); if (nb) nb.textContent = String(s);
+  const gb = document.getElementById("gaugeBand");   if (gb) gb.textContent = label;
+  const pill = document.getElementById("bandPill");  if (pill){ pill.textContent = label; pill.style.border = `1px solid ${color}22`; }
+})();
+
+// ---------- Phase 1 texts & rules (Personalized Notes) ----------
+// ---------- Chapter 2: Positive / Red Flag narratives for Section 2 ----------
+const TEXTS = {
+  prenup: {
+    pos: {
+      title: "Chapter 2 – Positive Note – Current, Local Prenup",
+      body:  "A prenup or postnup that is current and aligned with your place of residence shows foresight and planning. It provides clarity about expectations and helps reduce uncertainty in legal matters. Courts often give greater weight to agreements that are both recent and locally valid."
+    },
+    red: {
+      title: "Chapter 2 – Red Flag – Weak or Absent Prenup",
+      body:  "When no prenup exists, or when an older agreement hasn’t been updated after moving, the default rules of the jurisdiction usually apply. These laws can differ widely and may not reflect your intentions. The absence of a valid, current agreement often leaves more uncertainty and room for disagreement."
+    }
+  },
+  home: {
+    pos: {
+      title: "Chapter 2 – Positive Note – Home Structure",
+      body:  "Holding your primary residence in a single name or entity, or renting instead of owning, helps maintain clear separation. This structure makes it easier to trace ownership and responsibility."
+    },
+    red: {
+      title: "Chapter 2 – Red Flag – Property Titles",
+      body:  "A jointly titled home, even if one person contributes more financially, is generally treated as marital property. Over time, this may create assumptions of equal ownership. Such arrangements often lead to shared claims on equity regardless of individual input."
+    }
+  },
+  rentals: {
+    pos: {
+      title: "Chapter 2 – Positive Note – Investment Property Segregation",
+      body:  "When investment or rental properties are clearly owned through one person or an entity, it provides clarity. Ownership boundaries are easier to defend and manage."
+    },
+    red: {
+      title: "Chapter 2 – Red Flag – Joint Investment/Rental Ownership",
+      body:  "When properties are jointly owned, income and equity are usually considered marital. This can make future division more complex, as both partners are presumed to share equally. It may also require additional documentation to clarify ownership intentions."
+    }
+  },
+  k1: {
+    pos: {
+      title: "Chapter 2 – Positive Note – Sole Business Ownership",
+      body:  "Businesses owned and documented solely in one name create a cleaner separation. This makes it easier to defend the business as a personal asset."
+    },
+    red: {
+      title: "Chapter 2 – Red Flag – Joint Business Holdings",
+      body:  "If both names appear on business records, the company is more likely to be viewed as jointly owned. This can lead to more complicated questions about valuation and profit sharing. It may also bring the business more directly into discussions about marital assets."
+    }
+  },
+  crypto: {
+    pos: {
+      title: "Chapter 2 – Positive Note – Separated Crypto Wallets",
+      body:  "Digital assets that are well documented and held in clearly identifiable accounts or wallets create transparency. This makes ownership and reporting straightforward."
+    },
+    red: {
+      title: "Chapter 2 – Red Flag – Joint or Untracked Crypto",
+      body:  "Assets held in shared wallets or with incomplete records can be challenging to categorize. The lack of clear documentation often creates extra work for accountants or advisors. It may also introduce uncertainty about ownership and value."
+    }
+  },
+  retire: {
+    pos: {
+      title: "Chapter 2 – Positive Note – Individual Retirement/Investment Accounts",
+      body:  "Individual retirement and investment accounts make it easier to track contributions and maintain ownership boundaries. Records are clearer, and the intent is more obvious."
+    },
+    red: {
+      title: "Chapter 2 – Red Flag – Joint Retirement & Investments",
+      body:  "Jointly held retirement or investment accounts blur the distinction between individual contributions. Over time, these accounts are often treated as shared, even if one party contributes more. This can make future allocation less flexible."
+    }
+  },
+  banking: {
+    pos: {
+      title: "Chapter 2 – Positive Note – Separate Banking",
+      body:  "Separate bank accounts provide structure and make it easier to track who paid what. This arrangement reduces confusion and keeps financial trails clean."
+    },
+    red: {
+      title: "Chapter 2 – Red Flag – Joint Banking & Cash Flow",
+      body:  "Running most income and bills through joint accounts makes it difficult to distinguish what belongs to whom. In many cases, such accounts are assumed to be shared property. This can reduce clarity when discussing financial arrangements."
+    }
+  },
+  bizuse: {
+    pos: {
+      title: "Chapter 2 – Positive Note – Clean Company Boundaries",
+      body:  "When company funds are used only for business purposes, it demonstrates clear boundaries. This strengthens both accounting integrity and ownership clarity."
+    },
+    red: {
+      title: "Chapter 2 – Red Flag – Commingling Business & Personal",
+      body:  "Using company funds for household or family expenses blurs important boundaries. Even when reimbursements are made, the distinction between business and personal use becomes less clear. This can complicate both accounting and ownership discussions."
+    }
+  },
+  debt: {
+    pos: {
+      title: "Chapter 2 – Positive Note – Debts Kept in Your Name",
+      body:  "Keeping debts in one name helps clarify liability. It reduces uncertainty and makes repayment responsibility transparent."
+    },
+    red: {
+      title: "Chapter 2 – Red Flag – Shared Loans/Credit",
+      body:  "When debts are shared or co-signed, both parties are usually responsible for repayment. This can mean that one person remains liable even if the other incurs the expenses. Such arrangements increase the level of shared financial exposure."
+    }
+  },
+  tax: {
+    pos: {
+      title: "Chapter 2 – Positive Note – Clean, Transparent Filings",
+      body:  "Consistent and complete tax filings show strong financial discipline. Transparent reporting reduces the risk of disputes."
+    },
+    red: {
+      title: "Chapter 2 – Red Flag – Messy Taxes or Gaps",
+      body:  "Missing or inconsistent filings raise questions about accuracy and completeness. These issues often lead to additional scrutiny, and can result in unexpected complications. Unclear records make it harder to present a reliable financial picture."
+    }
+  }
+};
+const RULES = {
+  prenup:v=> v===100?"pos":"red",
+  home:v=> (v===100||v===70)?"pos":"red",
+  rentals:v=> v===100?"pos":"red",
+  k1:v=> (v===100||v===70)?"pos":"red",
+  crypto:v=> (v===100||v===70)?"pos":"red",
+  retire:v=> v===100?"pos":"red",
+  banking:v=> v===100?"pos":"red",
+  bizuse:v=> (v===100||v===50)?"pos":"red",
+  debt:v=> (v===100||v===70)?"pos":"red",
+  tax:v=> (v===100||v===70)?"pos":"red"
+};
+const ORDER = ["prenup","home","rentals","k1","crypto","retire","banking","bizuse","debt","tax"];
+
+// ---------- Recompute Red Flags from answers so KPIs/summary match notes ----------
+let __redFlags = 0;
+(function recomputeFlagsReport(){
+  try{
+    const ORDER_KEYS = ["prenup","home","rentals","k1","crypto","retire","banking","bizuse","debt","tax"];
+    __redFlags = ORDER_KEYS.reduce((acc,k)=>{
+      const a = answers[k];
+      if (!a) return acc;
+      const kind = RULES[k](Number(a.value));
+      return acc + (kind==="red" ? 1 : 0);
+    }, 0);
+    // Update UI + storage right away
+    const fStr = String(__redFlags);
+    const fEl = el("flags_val");
+    if (fEl) fEl.textContent = fStr;
+    localStorage.setItem("des_flags", fStr);
+    localStorage.setItem("flags", fStr);
+  }catch(e){ console.error("Report flag recompute failed:", e); }
+})();
+
+const TITLES = {
+  prenup:"Prenup / Where You Live",
+  home:"Primary Home",
+  rentals:"Investment / Rentals",
+  k1:"Business Investments & K-1",
+  crypto:"Crypto & Digital Assets",
+  retire:"Retirement & Investments",
+  banking:"Banking & Cash Flow",
+  bizuse:"Business / Company Use",
+  debt:"Debts & Credit",
+  tax:"Taxes & Disclosure"
+};
+
+// ---------- Executive Summary ----------
+(function summary(){
+  const s = Number(scoreStr)||300;
+  const f = Number(__redFlags)||0;
+  const band = s>=750?"Low exposure":(s>=600?"Moderate exposure":"High exposure");
+  const lines = [];
+  lines.push(`Your current Divorce Exposure Score™ is ${s}/850 (${band}).`);
+  if (f>=6) lines.push(`Multiple risk factors are present (${f} red flags). Your score is constrained by the upper cap that applies when ≥6 flags are identified.`);
+  else if (f>=4) lines.push(`${f} red flags were identified. Your maximum score is capped until key items are remediated.`);
+  else if (f>=1) lines.push(`${f} red flag${f>1?"s":""} were identified. Targeted fixes can meaningfully improve your score.`);
+  else lines.push(`No red flags were triggered. Maintain your current separation and documentation practices.`);
+
+  const hot = ORDER.filter(k => {
+    const a = answers[k]; if (!a) return false;
+    return RULES[k](Number(a.value))==="red";
+  }).map(k => TITLES[k]);
+  if (hot.length) lines.push(`Top focus area${hot.length>1?"s":""}: ${hot.slice(0,3).join(", ")}${hot.length>3?"…":""}.`);
+
+  el("summary_text").textContent = lines.join(" ");
+})();
+
+// ---------- Personalized notes (Phase 1) ----------
+(function notes(){
+  const tgt = el("notes_body");
+  if (!tgt){return;}
+  ORDER.forEach(k=>{
+    const a = answers[k];
+    if (!a) return;
+    const kind = RULES[k](Number(a.value));
+    const t = TEXTS[k][kind];
+
+    const wrap = document.createElement("div");
+    wrap.style.margin = "8px 0 10px";
+    const h = document.createElement("div");
+    h.textContent = t.title;
+    h.style.fontWeight = "800";
+    h.style.color = (kind==="red")? "#d93025" : "#0f9d58";
+    const p = document.createElement("p");
+    p.className = "muted";
+    p.style.margin = "6px 0 0";
+    p.textContent = t.body;
+    wrap.appendChild(h); wrap.appendChild(p);
+    tgt.appendChild(wrap);
+  });
+})();
+
+// ---------- Risk Interpretation (Phase 2 followups) ----------
+// ---------- Risk Interpretation (Chapter 3 text per category) ----------
+const INTERP = {
+  prenup:
+    "Without a current, locally valid agreement, assets and income may be divided by default laws rather than personal preference. This introduces more uncertainty, as local courts can apply community-property or equitable-distribution standards that may not align with your situation.",
+  home:
+    "Because the home is jointly titled, it may be interpreted as shared property in many jurisdictions, regardless of who pays the mortgage. This increases the likelihood that equity would be divided equally if challenged. The fact that you cover most costs adds complexity, as it creates a mismatch between financial input and recognized ownership.",
+  rentals:
+    "Joint ownership increases the chance that both rental income and long-term appreciation will be treated as shared. This reduces your flexibility to argue for unequal contributions. Even where intentions are different, courts tend to assume shared ownership.",
+  k1:
+    "Joint ownership increases the exposure of your business to division or valuation disputes. Even if only one partner is actively involved, documentation showing joint ownership can reduce clarity. This makes the company harder to separate from marital property.",
+  crypto:
+    "Jointly held or poorly tracked crypto increases uncertainty about ownership. In a review, it may be classified as shared marital property regardless of who funded it. Missing or incomplete records also increase the likelihood of costly investigations.",
+  retire:
+    "When retirement and investment accounts are held jointly, it becomes difficult to separate contributions. Courts usually treat these funds as marital, regardless of who added more. This increases the likelihood of an equal split in division scenarios.",
+  banking:
+    "Using joint accounts for the majority of income and expenses creates a strong presumption of commingling. Over time, it becomes harder to prove which funds were intended to be separate. This increases the exposure of personal income to marital claims.",
+  bizuse:
+    "When business and personal expenses are mixed, it weakens the argument that the company is a distinct entity. Courts and advisors may treat the business as part of the marital estate. This can increase the risk of valuation or division challenges.",
+  debt:
+    "Joint debts make both partners equally responsible in the eyes of lenders. Even if one party benefits more from the funds, both remain liable. This reduces flexibility and increases exposure to financial strain.",
+  tax:
+    "Gaps or inconsistencies in tax filings create uncertainty in financial reviews. Authorities or courts may scrutinize records more closely, increasing stress and potential costs. These issues can also trigger penalties or limit credibility."
+};
+
+(function clarifiers(){
+  const tgt = el("clarifiers_recap");
+  if (!tgt) return;
+  tgt.className = "clarifiers-grid";
+
+  const order = ["prenup","home","rentals","k1","crypto","retire","banking","bizuse","debt","tax"];
+  const TITLES = {
+    prenup:"Prenup / Where You Live",
+    home:"Primary Home",
+    rentals:"Investment / Rentals",
+    k1:"Business Investments & K-1",
+    crypto:"Crypto & Digital Assets",
+    retire:"Retirement & Investments",
+    banking:"Banking & Cash Flow",
+    bizuse:"Business / Company Use",
+    debt:"Debts & Credit",
+    tax:"Taxes & Disclosure"
+  };
+
+  order.forEach(k=>{
+    if (!followups[k] || !INTERP[k]) return;
+
+    const card = document.createElement("div");
+    card.className = "clarifier-item";
+
+    const title = document.createElement("strong");
+    title.textContent = TITLES[k];
+
+    const body = document.createElement("div");
+    body.className = "muted";
+    body.style.marginTop = "4px";
+    body.textContent = INTERP[k];
+
+    card.appendChild(title);
+    card.appendChild(body);
+    tgt.appendChild(card);
+  });
+})();
+
+
+// ---------- Next steps & recommendations ----------
+// ---------- Chapter 4: Next Steps & Recommendations ----------
+(function nextSteps(){
+  const list = el("next_steps");
+  if (!list) return;
+
+  const CH4 = {
+    prenup: "Consider reviewing or updating your prenup/postnup with a local professional. Even if not immediately necessary, this helps ensure your agreements remain enforceable and relevant. Establishing clarity now can save time, cost, and stress later.",
+    home:   "It may be worth documenting contributions more formally, through clear records or agreements. A discussion with a family lawyer about title options (such as trusts, agreements, or updated deeds) could also help align ownership with financial reality. At the very least, keeping detailed payment records will strengthen clarity if the matter is ever reviewed.",
+    rentals:"Maintain strong records showing contributions, management roles, and financing sources. If feasible, consider restructuring ownership through entities such as LLCs to clarify financial separation. Discuss with a professional whether formal agreements could better reflect actual arrangements.",
+    k1:     "Review your business structure and ownership papers. If your intention is that the business remain separate, update agreements and shareholder documents accordingly. A conversation with a corporate attorney may help ensure your records align with your goals.",
+    crypto: "Start keeping clear transaction records and ensure accounts are tied to identifiable owners. Consider consolidating holdings into wallets or exchanges with better tracking tools. Professional tax or accounting support can reduce risk and improve reporting.",
+    retire: "Keep detailed contribution records and consider separating future accounts if appropriate. Reviewing options with a financial advisor can help structure accounts to reflect actual ownership goals. Explore ways to preserve clarity without disrupting tax efficiency.",
+    banking:"Consider a clearer system for separating household and personal finances. For example, joint accounts can be limited to household expenses while income flows into individual accounts first. Tracking contributions through simple records will improve clarity.",
+    bizuse: "Tighten financial practices by ensuring business accounts are used only for business purposes. Establish reimbursement policies if needed, but avoid commingling whenever possible. Periodic reviews with an accountant can strengthen documentation.",
+    debt:   "Where possible, consider restructuring debts so they are more clearly separated. Keep documentation of who benefits from particular loans. Avoid opening new joint accounts unless there is a clear shared purpose.",
+    tax:    "Work with a tax professional to ensure filings are complete, accurate, and up-to-date. Centralize tax records in a secure, accessible location. A proactive review now can help resolve any outstanding issues before they become more serious."
+  };
+
+  list.innerHTML = "";
+  const ORDER = ["prenup","home","rentals","k1","crypto","retire","banking","bizuse","debt","tax"];
+  ORDER.forEach(k=>{
+    // Only list steps for categories present in Phase 1 answers (if available)
+    const hasAnswer = (typeof answers !== "undefined" && answers && answers[k]);
+    if (!hasAnswer || !CH4[k]) return;
+    const li = document.createElement("li");
+    li.textContent = CH4[k];
+    list.appendChild(li);
+  });
+})();
+
+(function renderReportHeader(){
+  const name  = localStorage.getItem("full_name") || "—";
+  const email = localStorage.getItem("email") || "—";
+  const d = new Date();
+  const dateStr = d.toLocaleString("en-US", { month:"long", year:"numeric" });
+  document.getElementById("clientName").textContent  = name;
+  document.getElementById("clientEmail").textContent = email;
+  document.getElementById("reportDate").textContent  = dateStr;
+})();
+
+</script>
+
+<div style="margin:36px 0; text-align:center;">
+  <button class="btn alt" onclick="window.print()">🖨️ Print or Save Report</button>
+</div>
+</body>
+</html>
