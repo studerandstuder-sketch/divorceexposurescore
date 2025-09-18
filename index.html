@@ -330,5 +330,65 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 
 </script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Helper to read the computed values that your existing code stores
+  function getScoreParams() {
+    return {
+      score: localStorage.getItem('des_score'),
+      band:  localStorage.getItem('des_band'),
+      flags: localStorage.getItem('des_flags')
+    };
+  }
+
+  async function startCheckout(product) {
+    try {
+      const { score, band, flags } = getScoreParams();
+      if (!score) {
+        alert('Please complete the 10 questions first to compute your score.');
+        return;
+      }
+      const res = await fetch('/.netlify/functions/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product, score, band, flags })
+      });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        window.location.href = data.url; // go to Stripe Checkout
+      } else {
+        alert(data.error || 'Could not start checkout. Please try again.');
+        console.error('Checkout error:', data);
+      }
+    } catch (err) {
+      alert('Network error starting checkout. Please try again.');
+      console.error(err);
+    }
+  }
+
+  // PERSONAL ($49) — element with id="toPhase2" already exists
+  const personalBtn = document.getElementById('toPhase2');
+  if (personalBtn) {
+    personalBtn.addEventListener('click', (e) => {
+      // Prevent the default navigation to phase2.html
+      e.preventDefault();
+      startCheckout('personal');
+    });
+  }
+
+  // PREMIUM ($699) — find by text or give it id="toPremium" in HTML if you prefer
+  let premiumBtn = document.getElementById('toPremium');
+  if (!premiumBtn) {
+    premiumBtn = Array.from(document.querySelectorAll('a.btn.primary, a.btn'))
+      .find(a => a.textContent.includes('Premium Marital Risk Analysis'));
+  }
+  if (premiumBtn) {
+    premiumBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      startCheckout('premium');
+    });
+  }
+});
+</script>
 </body>
 </html>
