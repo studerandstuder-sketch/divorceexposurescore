@@ -182,8 +182,13 @@
       </div>
       <p id="messageText" class="muted" style="min-height:56px"></p>
       <div class="cta-stack">
-        <a id="toPhase2" href="#" class="btn alt disabled" aria-disabled="true" tabindex="-1">Personal Marital Risk Analysis ($49)</a>
-        <a href="#" class="btn primary">Premium Marital Risk Analysis & Recommendation ($699)</a>
+       <a id="toPhase2" href="#" class="btn alt disabled" aria-disabled="true" tabindex="-1">
+  Personal Marital Risk Analysis ($49)
+</a>
+
+<a id="toPremium" href="#" class="btn primary disabled" aria-disabled="true" tabindex="-1">
+  Premium Marital Risk Analysis & Recommendation ($699)
+</a>
       </div>
 
       <footer>
@@ -203,7 +208,11 @@
 </main>
 
 <script>
-// weights
+// -----------------------------
+// SCORING + CHECKOUT (single script)
+// -----------------------------
+
+// Weights and helpers (your original logic)
 const W={prenup:.30,home:.20,rentals:.15,k1:.10,crypto:.05,retire:.10,banking:.05,bizuse:.03,debt:.02,tax:.05};
 const KEYS=Object.keys(W);
 const toPct=v=>Math.max(0,Math.min(100,Number(v||0)))/100;
@@ -211,15 +220,15 @@ function computeWeightedPct(v){let w=0;for(const k in W)w+=toPct(v[k])*W[k];retu
 function minCategoryPct(v){let m=1;for(const k in W)m=Math.min(m,toPct(v[k]));return m}
 function countFlags(v){
   let f=0;
-  if(v.prenup<=30)f++; if(v.prenup<=15)f++; // weak/no prenup
-  if(v.home==5)f++;                         // joint title but you pay
-  if(v.bizuse<=15)f++;                      // commingling
-  if(v.tax<=15)f++;                         // messy/gaps
-  if(v.crypto<=5 && v.crypto<70)f++;        // joint/untracked crypto
-  if(v.debt<=15)f++;                        // joint debts
-  if(v.banking<=15)f++;                     // joint banking
-  if(v.rentals<=15)f++;                     // joint rentals
-  if(v.retire<=15)f++;                      // joint investments
+  if(v.prenup<=30)f++; if(v.prenup<=15)f++;
+  if(v.home==5)f++;
+  if(v.bizuse<=15)f++;
+  if(v.tax<=15)f++;
+  if(v.crypto<=5 && v.crypto<70)f++;
+  if(v.debt<=15)f++;
+  if(v.banking<=15)f++;
+  if(v.rentals<=15)f++;
+  if(v.retire<=15)f++;
   return f;
 }
 function applyCaps(s,f){
@@ -249,146 +258,166 @@ function messageByRange(score){
   return "This is the highest level of exposure. We flagged 10+ risks, meaning your current setup is extremely vulnerable. The lack of prenup, joint property, shared debts, and messy taxes all combine to put you at maximum risk. But even here, small corrections add up. The sooner you act, the sooner you limit the damage. Our Premium service is not optional — it’s urgent.";
 }
 
-// Validation & compute
-const KEYS_ARR=Object.keys(W);
+// --- UI helpers for enabling buttons + reading stored score ---
+function getScoreParams() {
+  return {
+    score: localStorage.getItem('des_score'),
+    band:  localStorage.getItem('des_band'),
+    flags: localStorage.getItem('des_flags')
+  };
+}
+function setEnabled(el, enabled) {
+  if (!el) return;
+  if (enabled) {
+    el.classList.remove('disabled');
+    el.removeAttribute('aria-disabled');
+    el.removeAttribute('tabindex');
+  } else {
+    el.classList.add('disabled');
+    el.setAttribute('aria-disabled','true');
+    el.setAttribute('tabindex','-1');
+  }
+}
+function unlockIfScored() {
+  const { score } = getScoreParams();
+  const ok = !!score;
+  setEnabled(document.getElementById('toPhase2'), ok);
+  setEnabled(document.getElementById('toPremium'), ok);
+}
+window.unlockPurchaseButtons = unlockIfScored; // call this after computing
+
+// --- Stripe checkout via Netlify Function ---
+async function startCheckout(product) {
+  const { score, band, flags } = getScoreParams();
+  if (!score) {
+    alert('Please complete the 10 questions first to compute your score.');
+    return;
+  }
+  try {
+    const res = await fetch('/.netlify/functions/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product, score, band, flags })
+    });
+    const data = await res.json();
+    if (res.ok && data.url) {
+      window.location.href = data.url; // Stripe Checkout
+    } else {
+      alert(data.error || 'Could not start checkout. Please try again.');
+      console.error('Checkout error:', data);
+    }
+  } catch (e) {
+    alert('Network error starting checkout. Please try again.');
+    console.error(e);
+  }
+}
+function wirePurchaseButtons() {
+  const personal = document.getElementById('toPhase2');
+  const premium  = document.getElementById('toPremium');
+  if (personal) {
+    personal.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (personal.classList.contains('disabled') || personal.getAttribute('aria-disabled')==='true') return;
+      startCheckout('personal');
+    });
+  }
+  if (premium) {
+    premium.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (premium.classList.contains('disabled') || premium.getAttribute('aria-disabled')==='true') return;
+      startCheckout('premium');
+    });
+  }
+}
+
+// --- Validation + compute flow (updated to NOT set hrefs directly) ---
+const KEYS_ARR = Object.keys(W);
 function allAnswered(data){for(const k of KEYS_ARR){if(!data.get(k)) return false;} return true;}
 function highlightMissing(data){
   document.querySelectorAll('fieldset').forEach(fs=>fs.classList.remove('error'));
-  for(const k of KEYS_ARR){ if(!data.get(k)){ const fs=document.querySelector(`fieldset[data-key="${k}"]`); if(fs) fs.classList.add('error'); } }
+  for(const k of KEYS_ARR){
+    if(!data.get(k)){
+      const fs=document.querySelector(`fieldset[data-key="${k}"]`);
+      if(fs) fs.classList.add('error');
+    }
+  }
 }
 function runCompute(){
   const form=document.getElementById('scoreForm');
   const data=new FormData(form);
-  if(!allAnswered(data)){ document.getElementById('formHint').style.display='block'; highlightMissing(data); return; }
-  document.getElementById('formHint').style.display='none';
-  const vals=Object.fromEntries(data.entries()); for(const k in vals) vals[k]=Number(vals[k]);<!-- BEGIN: store chosen answers (label + value) -->
-  // capture the selected label + value per fieldset
+  if(!allAnswered(data)){
+    const hint=document.getElementById('formHint'); if(hint) hint.style.display='block';
+    highlightMissing(data);
+    return;
+  }
+  const hint=document.getElementById('formHint'); if(hint) hint.style.display='none';
+
+  // Raw values
+  const vals=Object.fromEntries(data.entries());
+  for(const k in vals) vals[k]=Number(vals[k]);
+
+  // Capture selected labels + values for Phase 2
   const answers = {};
   document.querySelectorAll('fieldset').forEach(fs => {
     const key = fs.dataset.key;
     const checked = fs.querySelector('input[type="radio"]:checked');
     if (checked) {
-      const labelText = checked.closest('label').innerText.trim();
+      const labelText = (checked.closest('label')?.innerText || '').trim();
       answers[key] = { value: Number(checked.value), label: labelText };
     }
   });
-  // persist full answer set for Phase 2
   localStorage.setItem('des_answers', JSON.stringify(answers));
-<!-- END: store chosen answers -->
-  const {score,flags}=compute(vals);
+
+  // Compute + display
+  const {score, flags}=compute(vals);
+  const band = bandLabel(score)+" exposure";
+
+  // Gauge + texts
   const max=565.48, percent=(score-300)/550, offset=max-(max*percent);
   const arc=document.getElementById('progressArc');
-  arc.style.strokeDashoffset=offset; arc.style.stroke=bandColor(score);
-  document.getElementById('gaugeNumber').textContent=score;
-  const band=bandLabel(score)+" exposure";
-  document.getElementById('gaugeBand').textContent=band;
-  document.getElementById('bandPill').textContent=band;
-  document.getElementById('messageText').textContent=messageByRange(score);
+  if (arc){ arc.style.strokeDashoffset=offset; arc.style.stroke=bandColor(score); }
+  const gNum=document.getElementById('gaugeNumber'); if (gNum) gNum.textContent=score;
+  const gBand=document.getElementById('gaugeBand'); if (gBand) gBand.textContent=band;
+  const pill=document.getElementById('bandPill'); if (pill) pill.textContent=band;
+  const msg=document.getElementById('messageText'); if (msg) msg.textContent=messageByRange(score);
 
-  
-  // ---- enable CTAs now that score is computed ----
-  const toPhase2El = document.getElementById('toPhase2');
-  const toPremiumEl = document.getElementById('toPremium');
-  if (toPhase2El){
-    const u2 = new URL('phase2.html', location.origin);
-    u2.searchParams.set('score', score);
-    u2.searchParams.set('band', band);
-    u2.searchParams.set('flags', flags);
-    toPhase2El.setAttribute('href', u2.toString());
-    toPhase2El.classList.remove('disabled');
-    toPhase2El.setAttribute('aria-disabled','false');
-    toPhase2El.removeAttribute('tabindex');
-  }
-  if (toPremiumEl){
-    const up = new URL('premium.html', location.origin);
-    up.searchParams.set('score', score);
-    up.searchParams.set('band', band);
-    up.searchParams.set('flags', flags);
-    toPremiumEl.setAttribute('href', up.toString());
-    toPremiumEl.classList.remove('disabled');
-    toPremiumEl.setAttribute('aria-disabled','false');
-    toPremiumEl.removeAttribute('tabindex');
-  }
-// persist + wire Phase 2 link with params
+  // Persist score for checkout + Phase 2
   localStorage.setItem('des_score', score);
   localStorage.setItem('des_band', band);
   localStorage.setItem('des_flags', flags);
-  const u = new URL('phase2.html', location.origin);
-  u.searchParams.set('score', score);
-  u.searchParams.set('band', band);
-  u.searchParams.set('flags', flags);
-  document.getElementById('toPhase2').setAttribute('href', u.toString());
+
+  // Enable the purchase buttons now
+  unlockIfScored();
+
+  // Scroll results into view
+  const results = document.getElementById('results');
+  if (results) results.scrollIntoView({behavior:'smooth'});
 }
-document.getElementById('scoreForm').addEventListener('submit', (e)=>{ e.preventDefault(); runCompute(); document.getElementById('results').scrollIntoView({behavior:'smooth'}); });
-document.getElementById('scoreForm').addEventListener('change', runCompute);
 
+// --- Boot ---
 document.addEventListener('DOMContentLoaded', ()=>{
-  const a1 = document.getElementById('toPhase2');
-  const a2 = document.getElementById('toPremium');
-  if (a1){ a1.href='#'; a1.classList.add('disabled'); a1.setAttribute('aria-disabled','true'); a1.setAttribute('tabindex','-1'); }
-  if (a2){ a2.href='#'; a2.classList.add('disabled'); a2.setAttribute('aria-disabled','true'); a2.setAttribute('tabindex','-1'); }
-});
-
-</script>
-  <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Helper to read the computed values that your existing code stores
-  function getScoreParams() {
-    return {
-      score: localStorage.getItem('des_score'),
-      band:  localStorage.getItem('des_band'),
-      flags: localStorage.getItem('des_flags')
-    };
-  }
-
-  async function startCheckout(product) {
-    try {
-      const { score, band, flags } = getScoreParams();
-      if (!score) {
-        alert('Please complete the 10 questions first to compute your score.');
-        return;
-      }
-      const res = await fetch('/.netlify/functions/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ product, score, band, flags })
-      });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        window.location.href = data.url; // go to Stripe Checkout
-      } else {
-        alert(data.error || 'Could not start checkout. Please try again.');
-        console.error('Checkout error:', data);
-      }
-    } catch (err) {
-      alert('Network error starting checkout. Please try again.');
-      console.error(err);
+  // Start with both CTAs disabled + href="#"
+  ['toPhase2','toPremium'].forEach(id=>{
+    const el=document.getElementById(id);
+    if (el){
+      el.setAttribute('href','#');
+      setEnabled(el, false);
     }
-  }
+  });
 
-  // PERSONAL ($49) — element with id="toPhase2" already exists
-  const personalBtn = document.getElementById('toPhase2');
-  if (personalBtn) {
-    personalBtn.addEventListener('click', (e) => {
-      // Prevent the default navigation to phase2.html
-      e.preventDefault();
-      startCheckout('personal');
-    });
-  }
+  // Wire the buttons and unlock if a score is already stored
+  wirePurchaseButtons();
+  unlockIfScored();
 
-  // PREMIUM ($699) — find by text or give it id="toPremium" in HTML if you prefer
-  let premiumBtn = document.getElementById('toPremium');
-  if (!premiumBtn) {
-    premiumBtn = Array.from(document.querySelectorAll('a.btn.primary, a.btn'))
-      .find(a => a.textContent.includes('Premium Marital Risk Analysis'));
-  }
-  if (premiumBtn) {
-    premiumBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      startCheckout('premium');
-    });
+  // Wire form events safely
+  const form = document.getElementById('scoreForm');
+  if (form){
+    form.addEventListener('submit', (e)=>{ e.preventDefault(); runCompute(); });
+    form.addEventListener('change', runCompute);
   }
 });
 </script>
+
+  
 </body>
 </html>
