@@ -1,13 +1,9 @@
 {
-  "name": "marital-risk-site",
+  "name": "divorce-exposure-score",
   "private": true,
   "version": "1.0.0",
-  "description": "Static site with Netlify Functions for Stripe Checkout",
-  "license": "UNLICENSED",
-  "engines": {
-    "node": ">=18"
-  },
-  "dependencies": {
-    "stripe": "^16.0.0"
-  }
+  "description": "Static site with Netlify Functions (Stripe Checkout)",
+  "engines": { "node": ">=18" },
+  "scripts": { "build": "echo Build success" },
+  "dependencies": { "stripe": "^16.0.0" }
 }
