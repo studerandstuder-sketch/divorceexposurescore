@@ -139,6 +139,104 @@ ul.clean{padding-left:18px;margin:6px 0}
         <div><b>Red Flags:</b> <span id="flags_val">—</span></div>
       </div>
     </section>
+<!-- Report Request → emails your team (Netlify Forms) -->
+<form name="report-request"
+      id="reportNotifyForm"
+      method="POST"
+      netlify
+      netlify-honeypot="bot-field"
+      action="/report.html#sent"
+      class="space-y-4">
+
+  <!-- Required for Netlify detection -->
+  <input type="hidden" name="form-name" value="report-request" />
+  <!-- Honeypot (spam trap) -->
+  <input type="text" name="bot-field" style="display:none" tabindex="-1" autocomplete="off" />
+
+  <!-- We’ll mirror the visible inputs into these hidden fields -->
+  <input type="hidden" name="fullName" id="nf_fullName" />
+  <input type="hidden" name="email"    id="nf_email" />
+
+  <!-- Score context -->
+  <input type="hidden" name="score"  id="nf_score" />
+  <input type="hidden" name="band"   id="nf_band" />
+  <input type="hidden" name="flags"  id="nf_flags" />
+
+  <!-- Optional: full answers JSON + a short summary line -->
+  <input type="hidden" name="answers_json"   id="nf_answers" />
+  <input type="hidden" name="report_summary" id="nf_summary" />
+
+  <!-- Useful metadata -->
+  <input type="hidden" name="source"    id="nf_source" />
+  <input type="hidden" name="timestamp" id="nf_ts" />
+
+  <!-- The action button that triggers the email to you -->
+  <button type="submit" class="btn alt" id="emailOwnerBtn">
+    Email this report to our team
+  </button>
+</form>
+
+<!-- Inline thank-you message -->
+<div id="sent" class="notice" style="display:none; margin-top:12px;">
+  ✅ Thanks — we’ve emailed your report request to our team. We’ll contact you shortly.
+</div>
+
+<script>
+(function(){
+  function text(el){ return el ? (el.innerText || el.textContent || '').trim() : ''; }
+
+  function fillHiddenFields(){
+    // Read score context from URL or localStorage
+    const qs = new URLSearchParams(location.search);
+    const score = qs.get('score') || localStorage.getItem('des_score') || '';
+    const band  = qs.get('band')  || localStorage.getItem('des_band')  || '';
+    const flags = qs.get('flags') || localStorage.getItem('des_flags') || '';
+    const answers = localStorage.getItem('des_answers') || '';
+
+    // Try to read visible Name/Email inputs on report.html (adjust selectors if needed)
+    const nameInput  = document.querySelector('#fullName, input[name="fullName"]');
+    const emailInput = document.querySelector('#email, input[name="email"]');
+
+    document.getElementById('nf_fullName').value = nameInput  ? nameInput.value  : '';
+    document.getElementById('nf_email').value    = emailInput ? emailInput.value : '';
+
+    document.getElementById('nf_score').value = score;
+    document.getElementById('nf_band').value  = band;
+    document.getElementById('nf_flags').value = flags;
+    document.getElementById('nf_answers').value = answers;
+
+    // Build a short, human-readable summary from the page (fallback to raw values)
+    const summary = [
+      'Divorce Exposure Score: ' + (text(document.getElementById('gaugeNumber')) || score),
+      'Band: ' + (text(document.getElementById('gaugeBand')) || band),
+      'Flags: ' + (flags || text(document.getElementById('flagsCount')) || '')
+    ].join(' | ');
+    document.getElementById('nf_summary').value = summary;
+
+    // Metadata
+    document.getElementById('nf_source').value = location.href;
+    document.getElementById('nf_ts').value     = new Date().toISOString();
+  }
+
+  // Show thank-you when redirected to #sent
+  function toggleSent(){
+    const el = document.getElementById('sent');
+    if (!el) return;
+    el.style.display = (location.hash === '#sent') ? 'block' : 'none';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    fillHiddenFields();
+    toggleSent();
+
+    // Keep data fresh: re-fill right before submit (captures latest name/email)
+    const form = document.getElementById('reportNotifyForm');
+    if (form) form.addEventListener('submit', fillHiddenFields);
+
+    window.addEventListener('hashchange', toggleSent);
+  });
+})();
+</script>
 
     <!-- 1. Executive Summary -->
     <section class="card">
