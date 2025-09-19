@@ -92,7 +92,7 @@
   </section>
 
   <section class="card">
-    <form name="phase2-analysis" method="POST" action="/report.html" netlify-honeypot="bot-field">
+<form name="phase2-analysis" method="POST" action="/success.html" netlify netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="phase2-analysis">
       <p style="display:none"><label>Don’t fill this out if you’re human: <input name="bot-field"></label></p>
 
@@ -117,7 +117,7 @@
         <div id="followups_body"></div>
       </div>
 
-      <button type="submit">Submit & Get My Personal Marital Risk Report</button>
+<button type="submit" class="btn primary">Get your report</button>
     </form>
   </section>
 </main>
@@ -403,6 +403,49 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch(e) { console.error("Could not persist name/email:", e); }
     });
   }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.forms['phase2-analysis'];
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const fd = new FormData(form);
+
+    // Pull values (fallback to localStorage)
+    const fullName = fd.get('full_name') || localStorage.getItem('full_name') || '';
+    const email    = fd.get('email')     || localStorage.getItem('email')     || '';
+    const score    = fd.get('score')     || localStorage.getItem('des_score') || '';
+    const band     = fd.get('exposure_band') || localStorage.getItem('des_band')  || '';
+    const flags    = fd.get('red_flags')     || localStorage.getItem('des_flags') || '';
+
+    // Persist for report.html
+    localStorage.setItem('full_name', fullName);
+    localStorage.setItem('email', email);
+    localStorage.setItem('des_score', score);
+    localStorage.setItem('des_band', band);
+    localStorage.setItem('des_flags', flags);
+
+    // Ensure Netlify sees the form name in the payload
+    if (!fd.get('form-name')) fd.set('form-name', 'phase2-analysis');
+
+    // Background submit to Netlify Forms
+    try {
+      await fetch('/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams(fd).toString()
+      });
+    } catch (err) {
+      console.warn('Background submit failed; continuing to report.html', err);
+    }
+
+    // Navigate to report (GET) so it always loads
+    window.location.href = 'report.html';
+  });
 });
 </script>
 
