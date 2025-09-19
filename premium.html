@@ -178,6 +178,72 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+<!-- Premium Contact Form (Netlify Forms) -->
+<form name="premium-contact"
+      method="POST"
+      netlify
+      netlify-honeypot="bot-field"
+      action="/premium.html#thanks"
+      class="space-y-4">
+
+  <!-- Netlify needs this hidden form-name input -->
+  <input type="hidden" name="form-name" value="premium-contact" />
+  <!-- Honeypot field (anti-spam) -->
+  <input type="text" name="bot-field" style="display:none" tabindex="-1" autocomplete="off" />
+
+  <!-- Visible fields -->
+  <div>
+    <label for="fullName">Full Name</label>
+    <input id="fullName" name="fullName" type="text" required />
+  </div>
+
+  <div>
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required />
+  </div>
+
+  <!-- Optional message -->
+  <div>
+    <label for="message">Message (optional)</label>
+    <textarea id="message" name="message" rows="4" placeholder="Tell us anything helpful…"></textarea>
+  </div>
+
+  <!-- Hidden fields to include the user’s score context -->
+  <input type="hidden" name="score" id="scoreHidden" />
+  <input type="hidden" name="band"  id="bandHidden" />
+  <input type="hidden" name="flags" id="flagsHidden" />
+
+  <button type="submit" class="btn primary">Submit</button>
+</form>
+
+<!-- Inline “thank you” message that appears after submit -->
+<div id="thanks" class="notice" style="display:none; margin-top:1rem;">
+  ✅ Thank you — we’ve received your request. We’ll email you shortly with next steps.
+</div>
+
+<script>
+  // Show the thank-you notice when redirected to #thanks
+  function toggleThanks() {
+    const n = document.getElementById('thanks');
+    if (!n) return;
+    n.style.display = (location.hash === '#thanks') ? 'block' : 'none';
+  }
+  toggleThanks();
+  window.addEventListener('hashchange', toggleThanks);
+
+  // Populate hidden fields with score context (from URL or localStorage)
+  (function fillHiddenScoreFields() {
+    const qs = new URLSearchParams(location.search);
+    const score = qs.get('score') || localStorage.getItem('des_score') || '';
+    const band  = qs.get('band')  || localStorage.getItem('des_band')  || '';
+    const flags = qs.get('flags') || localStorage.getItem('des_flags') || '';
+    const S = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+
+    S('scoreHidden', score);
+    S('bandHidden',  band);
+    S('flagsHidden', flags);
+  })();
+</script>
 
 </body>
 </html>
