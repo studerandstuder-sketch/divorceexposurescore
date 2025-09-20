@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Personal Marital Risk Analysis – Marital Risk Analytics LLC</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Personal Marital Risk Analysis – Marital Risk Analytics LLC</title>
+<style>
     :root {
       --grad-start:#6a2ad9; --grad-end:#2e6bff; --pri:#5e2bb8;
       --bg:#f7f8fc; --card:#fff; --text:#0b1220; --muted:#5b6b87; --border:#e6e9f2;
@@ -37,95 +38,83 @@
 </head>
 <body>
 <header>
-  <div class="wrap">
-    <div class="brand">
-      <div class="logo-mark">
-        <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span>
-      </div>
-      <div>
-        <h1>Marital Risk Analytics LLC</h1>
-        <small>Divorce Exposure Score™</small>
-      </div>
-    </div>
-  </div>
+<div class="wrap">
+<div class="brand">
+<div class="logo-mark">
+<span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span>
+</div>
+<div>
+<h1>Marital Risk Analytics LLC</h1>
+<small>Divorce Exposure Score™</small>
+</div>
+</div>
+</div>
 </header>
-
 <main>
-  <section class="card">
-    <h2>Your Divorce Exposure Score™ Snapshot</h2>
-    <p>Based on your 10-question screening, here’s your summary:</p>
-    <p><b>Score:</b> <span id="score_val">—</span> / 850
-       &nbsp; <b>Exposure:</b> <span id="band_val">—</span>
-       &nbsp; <b>Red Flags:</b> <span id="flags_val">—</span></p>
-
-    <div id="phase2_gauge" style="display:flex;align-items:center;gap:16px;margin-top:12px;">
-      <div class="score-circle" style="position:relative;display:inline-block;">
-        <svg viewBox="0 0 200 200" width="160" height="160" aria-label="Score gauge">
-          <circle cx="100" cy="100" r="90" stroke="#eef0f5" stroke-width="20" fill="none"></circle>
-          <circle id="p2_progressArc" cx="100" cy="100" r="90" stroke="#5e2bb8" stroke-width="20" fill="none"
-                  stroke-dasharray="565.48" stroke-dashoffset="565.48" stroke-linecap="round"
-                  transform="rotate(-90 100 100)"></circle>
-        </svg>
-        <div class="circle-center" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
-          <div id="p2_gaugeNumber" style="font-size:32px;font-weight:900;">—</div>
-          <div id="p2_gaugeBand" style="font-size:13px;font-weight:700;color:#5b6b87;margin-top:2px;">Start</div>
-          <div style="font-size:11px;color:#7a889e;margin-top:2px;">300 – 850</div>
-        </div>
-      </div>
-      <div>
-        <div id="p2_bandPill"
-             style="display:inline-block;background:#eef1ff;color:#2a2f45;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">
+<section class="card">
+<h2>Your Divorce Exposure Score™ Snapshot</h2>
+<p>Based on your 10-question screening, here’s your summary:</p>
+<p><b>Score:</b> <span id="score_val">—</span> / 850
+         <b>Exposure:</b> <span id="band_val">—</span>
+         <b>Red Flags:</b> <span id="flags_val">—</span></p>
+<div id="phase2_gauge" style="display:flex;align-items:center;gap:16px;margin-top:12px;">
+<div class="score-circle" style="position:relative;display:inline-block;">
+<svg aria-label="Score gauge" height="160" viewbox="0 0 200 200" width="160">
+<circle cx="100" cy="100" fill="none" r="90" stroke="#eef0f5" stroke-width="20"></circle>
+<circle cx="100" cy="100" fill="none" id="p2_progressArc" r="90" stroke="#5e2bb8" stroke-dasharray="565.48" stroke-dashoffset="565.48" stroke-linecap="round" stroke-width="20" transform="rotate(-90 100 100)"></circle>
+</svg>
+<div class="circle-center" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+<div id="p2_gaugeNumber" style="font-size:32px;font-weight:900;">—</div>
+<div id="p2_gaugeBand" style="font-size:13px;font-weight:700;color:#5b6b87;margin-top:2px;">Start</div>
+<div style="font-size:11px;color:#7a889e;margin-top:2px;">300 – 850</div>
+</div>
+</div>
+<div>
+<div id="p2_bandPill" style="display:inline-block;background:#eef1ff;color:#2a2f45;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;">
           —
         </div>
-        <p class="muted" style="margin:8px 0 0;">
+<p class="muted" style="margin:8px 0 0;">
           This snapshot helps us focus the review. Like a credit score reflects your credit habits,
           your Divorce Exposure Score™ reflects how your marital finances are set up.
         </p>
-      </div>
-    </div>
-  </section>
+</div>
+</div><p class="muted" id="scoreExplanation" style="margin-top:12px;"></p><div>
 
-  <section class="card">
-    <h2>Why Personal Marital Risk Analysis Matters</h2>
-    <p>We offer a unique tool to help you clearly understand your financial situation and prepare for potential challenges. Just like a credit score reflects your creditworthiness, the <b>Divorce Exposure Score™</b> reflects how your marital finances are set up.</p>
-    <p class="muted">⚠️ Important: This assessment is informational only and not legal, financial, or tax advice.</p>
-  </section>
-
-  <section class="card">
-<form name="phase2-analysis" method="POST" action="/success.html" netlify netlify-honeypot="bot-field">
-      <input type="hidden" name="form-name" value="phase2-analysis">
-      <p style="display:none"><label>Don’t fill this out if you’re human: <input name="bot-field"></label></p>
-
-      <!-- Hidden score data -->
-      <input type="hidden" name="score" id="score_hidden">
-      <input type="hidden" name="exposure_band" id="band_hidden">
-      <input type="hidden" name="red_flags" id="flags_hidden">
-
-      <!-- Contact info -->
-      <label for="full_name">Full Name</label>
-      <input id="full_name" name="full_name" type="text" placeholder="Your name" required>
-
-      <label for="email">Email (to receive your report)</label>
-      <input id="email" name="email" type="email" placeholder="you@email.com" required>
-
-      <!-- Clarifier questions -->
-      <div id="followups_container" class="card" style="margin-top:16px;">
-        <h3 style="margin-top:0;">Answer the following tailored questions</h3>
-        <p class="muted" style="margin:6px 0 14px;">
+</div>
+</section>
+<section class="card">
+<h2>Why Personal Marital Risk Analysis Matters</h2>
+<p>We offer a unique tool to help you clearly understand your financial situation and prepare for potential challenges. Just like a credit score reflects your creditworthiness, the <b>Divorce Exposure Score™</b> reflects how your marital finances are set up.</p>
+<p class="muted">⚠️ Important: This assessment is informational only and not legal, financial, or tax advice.</p>
+</section>
+<section class="card">
+<form action="/report.html" method="POST" name="phase2-analysis" netlify-honeypot="bot-field">
+<input name="form-name" type="hidden" value="phase2-analysis"/>
+<p style="display:none"><label>Don’t fill this out if you’re human: <input name="bot-field"/></label></p>
+<!-- Hidden score data -->
+<input id="score_hidden" name="score" type="hidden"/>
+<input id="band_hidden" name="exposure_band" type="hidden"/>
+<input id="flags_hidden" name="red_flags" type="hidden"/>
+<!-- Contact info -->
+<label for="full_name">Full Name</label>
+<input id="full_name" name="full_name" placeholder="Your name" required="" type="text"/>
+<label for="email">Email (to receive your report)</label>
+<input id="email" name="email" placeholder="you@email.com" required="" type="email"/>
+<!-- Clarifier questions -->
+<div class="card" id="followups_container" style="margin-top:16px;">
+<h3 style="margin-top:0;">Answer the following tailored questions</h3>
+<p class="muted" style="margin:6px 0 14px;">
           These quick questions are tailored to your previous answers.
         </p>
-        <div id="followups_body"></div>
-      </div>
-
-<button type="submit" class="btn primary">Get your report</button>
-    </form>
-  </section>
+<div id="followups_body"></div>
+</div>
+<button type="submit">Submit &amp; Get My Personal Marital Risk Report</button>
+</form>
+</section>
 </main>
-
 <footer>
   Informational diagnostic only — no legal, tax, or financial advice.
 </footer>
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   // ---- Helpers ----
@@ -134,9 +123,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const setVal  = (id,val)=>{ const el=document.getElementById(id); if(el) el.value=val; };
 
   // ---- Load Snapshot values ----
-  const scoreStr = pick("score","des_score");
-  const bandStr  = pick("band","des_band");
-  let flagsStr = pick("flags","des_flags");
+  const scoreStr = pick("des_score","score");
+  const bandStr  = pick("des_band","band");
+  let flagsStr = pick("des_flags","flags");
 
   setText("score_val", scoreStr);
   setText("band_val",  bandStr);
@@ -147,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ---- Gauge ----
   const score = Math.max(300, Math.min(850, Number(scoreStr) || 300));
-  const bandLabel = s => s >= 750 ? "Low" : (s >= 600 ? "Moderate" : "High");
+  const bandLabel = s => s >= 720 ? "Low" : (s >= 580 ? "Moderate" : "High");
   const bandColor = s => s >= 750 ? "#0f9d58" : (s >= 600 ? "#fb8c00" : "#d93025");
   const maxCirc = 565.48;
   const percent = (score - 300) / 550;
@@ -406,48 +395,30 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.forms['phase2-analysis'];
-  if (!form) return;
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const fd = new FormData(form);
-
-    // Pull values (fallback to localStorage)
-    const fullName = fd.get('full_name') || localStorage.getItem('full_name') || '';
-    const email    = fd.get('email')     || localStorage.getItem('email')     || '';
-    const score    = fd.get('score')     || localStorage.getItem('des_score') || '';
-    const band     = fd.get('exposure_band') || localStorage.getItem('des_band')  || '';
-    const flags    = fd.get('red_flags')     || localStorage.getItem('des_flags') || '';
-
-    // Persist for report.html
-    localStorage.setItem('full_name', fullName);
-    localStorage.setItem('email', email);
-    localStorage.setItem('des_score', score);
-    localStorage.setItem('des_band', band);
-    localStorage.setItem('des_flags', flags);
-
-    // Ensure Netlify sees the form name in the payload
-    if (!fd.get('form-name')) fd.set('form-name', 'phase2-analysis');
-
-    // Background submit to Netlify Forms
-    try {
-      await fetch('/', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: new URLSearchParams(fd).toString()
-      });
-    } catch (err) {
-      console.warn('Background submit failed; continuing to report.html', err);
+(function(){
+  function applyDynamicExplanation(scoreStr, flagsStr, id){
+    var s = Number(scoreStr)||0, f = Number(flagsStr)||0;
+    var el = document.getElementById(id||'scoreExplanation');
+    if(!el) return;
+    if (f >= 10 || s < 480){
+      el.textContent = "This is the highest level of exposure. We flagged 10+ risks, meaning your current setup is extremely vulnerable. The lack of prenup, joint property, shared debts, and messy taxes all combine to put you at maximum risk. But even here, small corrections add up. The sooner you act, the sooner you limit the damage. Our Premium service is not optional — it’s urgent.";
+    } else if (f >= 5 || s < 650){
+      el.textContent = "We flagged several areas of concern. While not everything is critical, your current mix of joint ownership, shared accounts, and patchy documentation leaves you exposed. The good news: targeted corrections in just a few areas can meaningfully reduce your risk. We recommend starting with the most urgent fixes, then moving step by step.";
+    } else if (f >= 2 || s < 720){
+      el.textContent = "Your setup shows both strengths and weaknesses. Some protections are in place — perhaps a prenup, or clean business separation — but gaps remain. These could become costly if challenged. With a few smart adjustments now, you could shift firmly into the low-risk category. Our tailored review is designed exactly for this situation.";
+    } else {
+      el.textContent = "Overall, your setup is strong and relatively low-risk. Clear separation of accounts, documentation, and ownership records are working in your favor. Even so, life changes — moves, children, new assets — can shift the balance. Keeping everything updated is key to staying protected. A quick review can confirm your good standing.";
     }
-
-    // Navigate to report (GET) so it always loads
-    window.location.href = 'report.html';
-  });
+  }
+  window.__applyDynamicExplanation = applyDynamicExplanation;
+})();
+</script><script>
+document.addEventListener('DOMContentLoaded', function(){
+  var score = localStorage.getItem('des_score') || localStorage.getItem('score') || "";
+  var flags = localStorage.getItem('des_flags') || localStorage.getItem('flags') || "";
+  if (window.__applyDynamicExplanation){
+    window.__applyDynamicExplanation(score, flags, 'scoreExplanation');
+  }
 });
-</script>
-
-</body>
+</script></body>
 </html>
