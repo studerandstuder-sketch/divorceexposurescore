@@ -243,6 +243,18 @@
 </main>
 
 <script>
+// persist score in both key formats so report/success can read it
+function setScoreKeys(score, band, flags){
+  try{
+    localStorage.setItem('des_score', score);
+    localStorage.setItem('des_band', band);
+    localStorage.setItem('des_flags', flags);
+    localStorage.setItem('score', score);
+    localStorage.setItem('band', band);
+    localStorage.setItem('flags', flags);
+  }catch(e){}
+}
+
 // -----------------------------
 // SCORING + CHECKOUT (single script)
 // -----------------------------
@@ -369,7 +381,8 @@ function updateGauge(score){
 
 // --- main compute & wire ---
 function runCompute(){
-  const { complete, vals, answers } = collectAnswers();
+  try{ if (typeof compute==='function'){ /* keep your own logic */ } }catch(e){}
+const { complete, vals, answers } = collectAnswers();
   if (!complete){
     document.getElementById('formHint').style.display='block';
     highlightMissing();
@@ -466,7 +479,10 @@ async function beginCheckout(type){
     const res = await fetch('/.netlify/functions/create-checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, product:type, origin:location.origin })
+      body: JSON.stringify({ type, product:type, origin:location.origin,
+      score: (localStorage.getItem('score')||localStorage.getItem('des_score')||''),
+      band:  (localStorage.getItem('band')||localStorage.getItem('des_band')||''),
+      flags: (localStorage.getItem('flags')||localStorage.getItem('des_flags')||'') })
     });
     const data = await res.json();
     if (data && data.url) {
