@@ -9,25 +9,20 @@
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);font:16px/1.5 system-ui,Segoe UI,Inter,Roboto,Arial;color:#0b1220}
     .wrap{max-width:760px;margin:8vh auto;padding:0 18px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:24px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:24px;text-align:center}
     h1{margin:0 0 6px;font-size:1.6rem}
     .muted{color:var(--muted)}
-    .pill{display:inline-block;border:1px solid #e2e7f8;border-radius:999px;padding:6px 10px;margin-top:8px}
+    .pill{display:inline-block;border:1px solid #e2e7f8;border-radius:999px;padding:6px 10px;margin-top:12px}
     .ok{color:#0f9d58;border-color:#cdecd9}
     .bad{color:#d93025;border-color:#f7c7c2}
-    a.btn{display:inline-block;margin-top:14px;background:var(--pri);color:#fff;text-decoration:none;padding:10px 16px;border-radius:10px;font-weight:800}
-    .small{font-size:12px;color:#5b6b87;margin-top:8px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <h1>Thank you!</h1>
-      <p class="muted">We are verifying your payment. This page will redirect automatically.</p>
+      <p class="muted">We are verifying your payment. This page will update automatically.</p>
       <div id="status" class="pill">Checking…</div>
-      <div id="details" class="muted" style="margin-top:10px;"></div>
-      <div id="redir" class="small"></div>
-      <a href="/" class="btn">← Back to Home</a>
     </div>
   </div>
 
@@ -37,17 +32,13 @@
       return u.searchParams.get(param) || '';
     }
     function targetUrl(product){
-      // Map products to pages
       if(product === 'premium') return '/premium.html';
-      // default (personal/$49)
-      return '/report.html';
+      if(product === 'personal') return '/phase2.html';   // FIXED
+      return '/';
     }
     async function verify(){
       const session_id = get('session_id');
       const product    = (get('product')||'').toLowerCase();
-      const score      = get('score');
-      const band       = get('band');
-      const flags      = get('flags');
       if(!session_id){
         document.getElementById('status').textContent = 'Missing session id';
         document.getElementById('status').className = 'pill bad';
@@ -58,37 +49,19 @@
         const data = await res.json();
         const ok = !!(data && data.paid);
         const sEl = document.getElementById('status');
-        const dEl = document.getElementById('details');
-        const rEl = document.getElementById('redir');
         if (ok){
           sEl.textContent = 'Payment verified';
           sEl.className = 'pill ok';
           const prod = product || data.product || 'personal';
-          dEl.innerHTML = `
-            <div>Product: <b>${prod}</b></div>
-            <div>Score: <b>${score || '—'}</b> | Exposure: <b>${band || '—'}</b> | Flags: <b>${flags || '—'}</b></div>`;
-
-          // Persist for next page (phase2/premium) if not already set
-          try{
-            if(score) localStorage.setItem('score', score);
-            if(band)  localStorage.setItem('band', band);
-            if(flags) localStorage.setItem('flags', flags);
-          }catch(e){}
-
           const dest = targetUrl(prod);
-          rEl.textContent = `Redirecting to ${dest} …`;
-
-          // Redirect after short delay
-          setTimeout(()=>{ location.href = dest; }, 1500);
+          setTimeout(()=>{ location.href = dest; }, 1200);
         } else {
           sEl.textContent = 'Payment not verified yet';
           sEl.className = 'pill bad';
-          dEl.textContent = data && data.error ? data.error : 'If you believe this is an error, please contact support.';
         }
       } catch (e){
         document.getElementById('status').textContent = 'Verification error';
         document.getElementById('status').className = 'pill bad';
-        document.getElementById('details').textContent = 'Please refresh or contact support.';
       }
     }
     verify();
