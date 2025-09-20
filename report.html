@@ -529,7 +529,7 @@ const RECS = {
           const r = await fetch('/.netlify/functions/create-checkout', {
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ type:'premium', score, band, flags, email })
+            body: JSON.stringify({ type:'premium', product:'premium', score, band, flags, email, origin:location.origin })
           });
           const data = await r.json();
           if(r.ok && data.url){ window.location = data.url; }
@@ -557,7 +557,7 @@ const RECS = {
           await fetch('/.netlify/functions/send-report', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, score, band, flags, html })
+            body: JSON.stringify({ type:'premium', product:'premium', score, band, flags, email, origin:location.origin })
           });
         }catch(e){
           // non-blocking: still allow printing

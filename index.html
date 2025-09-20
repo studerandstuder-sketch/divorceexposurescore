@@ -466,7 +466,7 @@ async function beginCheckout(type){
     const res = await fetch('/.netlify/functions/create-checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, origin: location.origin })
+      body: JSON.stringify({ type, product:type, origin:location.origin })
     });
     const data = await res.json();
     if (data && data.url) {
