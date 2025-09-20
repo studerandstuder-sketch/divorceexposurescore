@@ -529,7 +529,7 @@ const RECS = {
           const r = await fetch('/.netlify/functions/create-checkout', {
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ product:'premium', score, band, flags, email })
+            body: JSON.stringify({ type:'premium', score, band, flags, email })
           });
           const data = await r.json();
           if(r.ok && data.url){ window.location = data.url; }

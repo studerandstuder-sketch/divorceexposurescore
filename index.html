@@ -459,6 +459,41 @@ document.addEventListener('DOMContentLoaded', ()=>{
   if (a1){ a1.href='#'; a1.classList.add('disabled'); a1.setAttribute('aria-disabled','true'); a1.setAttribute('tabindex','-1'); }
   if (a2){ a2.href='#'; a2.classList.add('disabled'); a2.setAttribute('aria-disabled','true'); a2.setAttribute('tabindex','-1'); }
 });
+
+// --- Stripe Checkout via Netlify Function ---
+async function beginCheckout(type){
+  try {
+    const res = await fetch('/.netlify/functions/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, origin: location.origin })
+    });
+    const data = await res.json();
+    if (data && data.url) {
+      location.href = data.url;
+    } else {
+      alert(data.error || 'Checkout error. Please try again.');
+    }
+  } catch (e) {
+    alert('Network error. Please try again.');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  const p = document.getElementById('toPhase2');
+  const r = document.getElementById('toPremium');
+  if (p) p.addEventListener('click', (e)=>{
+    if (p.classList.contains('disabled')) { e.preventDefault(); return; }
+    e.preventDefault();
+    beginCheckout('personal');
+  });
+  if (r) r.addEventListener('click', (e)=>{
+    if (r.classList.contains('disabled')) { e.preventDefault(); return; }
+    e.preventDefault();
+    beginCheckout('premium');
+  });
+});
+
 </script>
 </body>
 </html>
