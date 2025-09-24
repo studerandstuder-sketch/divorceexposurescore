@@ -118,6 +118,17 @@
 <button id="request_btn" type="button">Email Me the Premium Intake Packet</button>
 <p class="muted" id="confirm" style="display:none;margin-top:10px;">Thanks! You’ll receive the PDF intake packet at the email above.</p>
 </section>
+
+<!-- Hidden Netlify form for notifications -->
+<form name="premium-contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="premium-contact" />
+  <input type="text" name="name" />
+  <input type="email" name="email" />
+  <input type="text" name="score" />
+  <input type="text" name="band" />
+  <input type="text" name="flags" />
+  <input type="text" name="source" value="premium" />
+</form>
 </main>
 <footer>
   Informational diagnostic only — not legal, tax, or financial advice.
@@ -215,5 +226,41 @@ document.addEventListener('DOMContentLoaded', function(){
       if(el){ el.style.display='block'; el.textContent='Network error. Please try again.'; }
     }
   });
-})();</script></body>
+})();</script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var btn = document.getElementById("request_btn");
+  if(!btn) return;
+  function encode(data){
+    return Object.keys(data).map(function(k){
+      return encodeURIComponent(k)+"="+encodeURIComponent(data[k]);
+    }).join("&");
+  }
+  btn.addEventListener("click", function(){
+    try{
+      var name = (document.getElementById("full_name") && document.getElementById("full_name").value) || "";
+      var email = (document.getElementById("email") && document.getElementById("email").value) || "";
+      var score = (document.getElementById("score_hidden") && document.getElementById("score_hidden").value) || (localStorage.getItem("score") || "");
+      var band  = (document.getElementById("band_hidden") && document.getElementById("band_hidden").value) || (localStorage.getItem("band") || "");
+      var flags = (document.getElementById("flags_hidden") && document.getElementById("flags_hidden").value) || (localStorage.getItem("flags") || "");
+      // Submit to Netlify Forms (no redirect)
+      var payload = {
+        "form-name": "premium-contact",
+        name: name,
+        email: email,
+        score: score,
+        band: band,
+        flags: flags,
+        source: "premium"
+      };
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encode(payload)
+      }).catch(function(e){ /* swallow errors to avoid UX disruption */ });
+    }catch(e){ /* no-op */ }
+  }, { once: false });
+});
+</script>
+</body>
 </html>
