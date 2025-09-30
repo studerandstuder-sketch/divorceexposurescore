@@ -67,7 +67,7 @@
 </header>
 <div class="container">
 <!-- Snapshot -->
-<section class="card" id="reportHeader"><h2>Personal Marital Risk Analysis Report</h2><p>Client: <b id="client_name">FNDFHSF</b></p><p>Date: <b id="report_date">September 2025</b></p><p>Email: <b id="client_email">DGVZF@FYUF.HT</b></p></section><section class="card">
+<section class="card" id="reportHeader"><h2>Personal Marital Risk Analysis Report</h2><p>Client: <b id="full_name">FNDFHSF</b></p><p>Date: <b id="report_date">September 2025</b></p><p>Email: <b id="email">DGVZF@FYUF.HT</b></p></section><section class="card">
 <h2>Your Divorce Exposure Score™ Snapshot</h2>
 <div class="gauge" style="margin-top:8px;">
 <div class="score-circle">
@@ -461,14 +461,14 @@ const RECS = {
 <script>
 (function(){
   // Fill report header from localStorage if present
-  const name = localStorage.getItem('client_name') || 'FNDFHSF';
-  const email = localStorage.getItem('client_email') || 'DGVZF@FYUF.HT';
+  const name = localStorage.getItem('full_name') || 'FNDFHSF';
+  const email = localStorage.getItem('email') || 'DGVZF@FYUF.HT';
   const dateEl = document.getElementById('report_date');
   const now = new Date();
   const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   const monthYear = monthNames[now.getMonth()] + " " + now.getFullYear();
-  document.getElementById('client_name').textContent = name;
-  document.getElementById('client_email').textContent = email;
+  document.getElementById('full_name').textContent = name;
+  document.getElementById('email').textContent = email;
   if (dateEl) dateEl.textContent = monthYear;
 
   // Build dynamic Executive Summary
@@ -524,7 +524,7 @@ const RECS = {
         const score = get('des_score') || get('score') || '';
         const band  = get('des_band')  || get('band')  || '';
         const flags = get('des_flags') || get('flags') || '';
-        const email = get('client_email') || '';
+        const email = get('email') || '';
         try{
           const r = await fetch('/.netlify/functions/create-checkout', {
             method:'POST',
@@ -544,8 +544,8 @@ const RECS = {
       if(!btn) return;
       btn.addEventListener('click', async function(){
         const get = k => localStorage.getItem(k) || '';
-        const name  = get('client_name') || '—';
-        const email = get('client_email') || '—';
+        const name  = get('full_name') || '—';
+        const email = get('email') || '—';
         const score = get('des_score') || get('score') || '—';
         const band  = get('des_band')  || get('band')  || '—';
         const flags = get('des_flags') || get('flags') || '—';
