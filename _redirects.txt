@@ -1,0 +1,20 @@
+# ========================================
+# Redirects for LoveExposureScore migration
+# ========================================
+
+# Redirect all old DivorceExposureScore URLs to LoveExposureScore
+https://divorceexposurescore.com/*        https://www.loveexposurescore.com/:splat   301!
+https://www.divorceexposurescore.com/*    https://www.loveexposurescore.com/:splat   301!
+http://divorceexposurescore.com/*         https://www.loveexposurescore.com/:splat   301!
+http://www.divorceexposurescore.com/*     https://www.loveexposurescore.com/:splat   301!
+
+# Force non-www to www for the new domain
+https://loveexposurescore.com/*           https://www.loveexposurescore.com/:splat   301!
+http://loveexposurescore.com/*            https://www.loveexposurescore.com/:splat   301!
+
+# Optional: ensure HTTPS always
+/*                                        https://www.loveexposurescore.com/:splat   301!
+
+# ========================================
+# End of redirects
+# ========================================
