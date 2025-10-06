@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Divorce Exposure Score™ – Personalized Report</title>
+<title>Love Exposure Score™ – Personalized Report</title>
 <style>
     :root{
       --pri:#5e2bb8; --grad-start:#6a2ad9; --grad-end:#2e6bff;
@@ -60,7 +60,7 @@
 </div>
 <div>
 <h1>Marital Risk Analytics LLC</h1>
-<small>Divorce Exposure Score™ – Personalized Report</small>
+<small>Love Exposure Score™ – Personalized Report</small>
 </div>
 </div>
 </div>
@@ -68,7 +68,7 @@
 <div class="container">
 <!-- Snapshot -->
 <section class="card" id="reportHeader"><h2>Personal Marital Risk Analysis Report</h2><p>Client: <b id="full_name">FNDFHSF</b></p><p>Date: <b id="report_date">September 2025</b></p><p>Email: <b id="email">DGVZF@FYUF.HT</b></p></section><section class="card">
-<h2>Your Divorce Exposure Score™ Snapshot</h2>
+<h2>Your Love Exposure Score™ Snapshot</h2>
 <div class="gauge" style="margin-top:8px;">
 <div class="score-circle">
 <svg aria-label="Score gauge" height="160" viewbox="0 0 200 200" width="160">
@@ -83,7 +83,7 @@
 </div>
 <div>
 <div class="pill" id="bandPill">—</div>
-<p class="muted" style="margin-top:8px;">This snapshot helps us focus the review. Like a credit score reflects your credit habits, your Divorce Exposure Score™ reflects how your marital finances are set up.</p>
+<p class="muted" style="margin-top:8px;">This snapshot helps us focus the review. Like a credit score reflects your credit habits, your Love Exposure Score™ reflects how your marital finances are set up.</p>
 </div>
 </div>
 <div class="kpis" style="margin-top:12px;">
@@ -92,7 +92,7 @@
 <div><b>Red Flags:</b> <span id="flags_val">—</span></div>
 </div>
 <p class="muted" id="scoreExplanation" style="margin-top:12px;"></p>
-</section><section class="card" id="execSummary"><h2>1) Executive Summary</h2><p id="execSummaryText">Your current Divorce Exposure Score™ is 680/850 (Moderate exposure). 1 red flag were identified. Targeted fixes can meaningfully improve your score. Top focus area: Prenup / Where You Live.</p></section>
+</section><section class="card" id="execSummary"><h2>1) Executive Summary</h2><p id="execSummaryText">Your current Love Exposure Score™ is 680/850 (Moderate exposure). 1 red flag were identified. Targeted fixes can meaningfully improve your score. Top focus area: Prenup / Where You Live.</p></section>
 <!-- Chapter 2 -->
 <section class="card">
 <h2>2) Personalized Red Flags, Neutrals &amp; Positive Notes</h2>
@@ -510,7 +510,7 @@ const RECS = {
   const exposure = band || (score>=750?'Low exposure':(score>=600?'Moderate exposure':'High exposure'));
   const flagWord = (flags===1?'red flag was':'red flags were');
   const line = score>0
-    ? `Your current Divorce Exposure Score™ is ${score}/850 (${exposure}). ${flags||0} ${flagWord} identified. Targeted fixes can meaningfully improve your score. Top focus area: ${focus}.`
+    ? `Your current Love Exposure Score™ is ${score}/850 (${exposure}). ${flags||0} ${flagWord} identified. Targeted fixes can meaningfully improve your score. Top focus area: ${focus}.`
     : `Your report will summarize your score and focus areas once you finish the screening.`;
   const execEl = document.getElementById('execSummaryText');
   if (execEl) execEl.textContent = line;
